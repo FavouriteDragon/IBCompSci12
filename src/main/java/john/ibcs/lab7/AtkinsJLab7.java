@@ -105,7 +105,8 @@ public class AtkinsJLab7 {
     }
 
     private static void getPrimes() {
-        int number = 0, number2 = 0;
+        int number = 0, number2 = 0, index = 0;
+        boolean print = false;
 
         System.out.println("Please enter a number between 1 and 1000.");
         while (number < 1 || number > 1000) {
@@ -120,33 +121,25 @@ public class AtkinsJLab7 {
         int max = Math.max(number, number2);
         int min = Math.min(number, number2);
 
-        String suffix = "";
         for (int i = min; i <= max; i++) {
-            int num = i;
-            //Obtains the last digit of the number, and ensures that the suffix is compatible with the number.
-            num = (num > 10 && num < 14) ? num : num % 10;
-            //Attaches the appropriate suffix to the number.
-            switch (num) {
-                case 1:
-                    suffix = "st";
-                    break;
-                case 2:
-                    suffix = "nd";
-                    break;
-                case 3:
-                    suffix = "rd";
-                    break;
-
-                default:
-                    suffix = "th";
-                    break;
+            for (int j = 0; j < 1000; j++) {
+                if (!print) {
+                    if (primes[j] >= i && primes[j] <= max) {
+                        if (index < j || index == 0 && i == min) {
+                            print = true;
+                            index = j;
+                        }
+                    }
+                }
             }
-            System.out.println("The " + i + suffix + " prime number is " + primes[i - 1] + ".");
+            if (print)
+                System.out.println(primes[index]);
+            print = false;
         }
     }
 
     private static void primeFactors() {
-        int number , digits = 0, runningTotal;
+        int number, digits = 0, runningTotal;
         int[] primeFactors = new int[10000];
 
         System.out.println("Please enter a number greater than 1.");
@@ -170,7 +163,7 @@ public class AtkinsJLab7 {
         for (int i = 0; i < digits; i++) {
             if (primeFactors[i] != 0) {
                 if (digits == 1)
-                    System.out.print(+ primeFactors[i] + ".");
+                    System.out.print(+primeFactors[i] + ".");
                 else if (i == digits - 1)
                     System.out.print(" and " + primeFactors[i] + ".");
                 else
