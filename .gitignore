@@ -1,4 +1,5 @@
 *.xml
-/out
 *.iml
+*.db
 /.idea
+/out
