@@ -184,7 +184,7 @@ public class AtkinsJLab7 {
             System.out.println("1: Prime number obtainer.");
             System.out.println("2: Prime number list obtainer.");
             System.out.println("3: Prime factors.");
-            number = handlePositiveInputs(input.next(), 0, Integer.MAX_VALUE);
+            number = handleInputs(input.next());
             switch (number) {
                 case 1:
                     getPrime();
