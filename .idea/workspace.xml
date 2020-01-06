@@ -4,7 +4,14 @@
     <option name="SYNC_PROJECT_BEFORE_BUILD" value="true" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c12911b2-f4d8-45cc-bcd4-0b3fc816cbd8" name="Default Changelist" comment="" />
+    <list default="true" id="c12911b2-f4d8-45cc-bcd4-0b3fc816cbd8" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/classlist.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJLab7.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJLab7.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab7/AtkinsJLab7.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab7/AtkinsJLab7.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,8 +22,16 @@
     <option name="MAKE_PROJECT_ON_SAVE" value="true" />
     <option name="PARALLEL_COMPILATION" value="true" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="MavenImportPreferences">
     <option name="importingSettings">
@@ -27,7 +42,14 @@
   </component>
   <component name="ProjectId" id="1Uqe91NCVffr7o4PPpqDWYSd9a9" />
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="configurable.group.build" />
+    <property name="last_opened_file_path" value="$USER_HOME$/AppData/Local/Programs/Git/bin/git.exe" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="Y:\Github\IBCompSci12\src\main\java\john\ibcs\lab8" />
+      <recent name="Y:\Github\IBCompSci12\src\main\java\john\ibcs" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -41,7 +63,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.AtkinsJLab7">
+  <component name="RunManager" selected="Application.AtkinsJLab8">
     <configuration name="AtkinsJLab6" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.lab6.AtkinsJLab6" />
       <module name="IBCompSci12" />
@@ -61,6 +83,19 @@
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="main.java.john.ibcs.lab7.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AtkinsJLab8" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.lab8.AtkinsJLab8" />
+      <module name="IBCompSci12" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="main.java.john.ibcs.lab8.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>

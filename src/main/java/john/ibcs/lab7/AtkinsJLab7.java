@@ -136,6 +136,9 @@ public class AtkinsJLab7 {
                 System.out.println(primes[index]);
             print = false;
         }
+        if (index == 0) {
+            System.out.print("There are no prime numbers between the two numbers that you gave.");
+        }
     }
 
     private static void primeFactors() {
