@@ -5,7 +5,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="IBCompSci12" options="--add-exports=java.base/jdk.internal=ALL-UNNAMED --add-exports=java.base/jdk.internal.math=ALL-UNNAMED" />
+      <module name="IBCompSci12" options="--add-exports=java.base/jdk.internal=ALL-UNNAMED --add-exports=java.base/jdk.internal.math=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" />
     </option>
   </component>
 </project>

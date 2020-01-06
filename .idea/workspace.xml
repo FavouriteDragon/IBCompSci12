@@ -5,12 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c12911b2-f4d8-45cc-bcd4-0b3fc816cbd8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/classlist.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJLab7.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJLab7.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab7/AtkinsJLab7.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab7/AtkinsJLab7.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,6 +44,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="Y:\Github\IBCompSci12" />
       <recent name="Y:\Github\IBCompSci12\src\main\java\john\ibcs\lab8" />
       <recent name="Y:\Github\IBCompSci12\src\main\java\john\ibcs" />
     </key>
