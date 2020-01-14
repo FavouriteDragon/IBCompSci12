@@ -3,9 +3,8 @@ package main.java.john.ibcs.lab8;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AtkinsJLab8 {
     private static Scanner input = new Scanner(System.in);
@@ -70,6 +69,30 @@ public class AtkinsJLab8 {
     }
 
     /**
+     @formatter: off
+     */
+
+
+    /**
+     * Splits the string at the first space.
+     *
+     * @param toSplit The string to split.
+     * @return Returns the phrase before the split/space.
+     */
+    private static String splitAtString(String toSplit) {
+        String toReturn = "";
+        for (int i = 0; i < toSplit.length(); i++) {
+            char character = toSplit.charAt(i);
+
+            if (Character.toString(character).equalsIgnoreCase(" ")) {
+                return toReturn;
+            }
+            toReturn += character;
+        }
+        return toReturn;
+    }
+
+    /**
      * @param toSplit The string to split.
      * @return Returns the rest of the string after the split.
      */
@@ -92,11 +115,33 @@ public class AtkinsJLab8 {
         return toReturn.delete(0, toRemove.length() - 1).toString();
     }
 
+    private static long getIDFromString(String line) {
+        return Long.parseLong(splitAtString(line));
+    }
+
+    private static int getGradeFromString(String line) {
+        return Integer.parseInt(splitAtString(getRestSplitAtString(line)));
+    }
+
+    private static String getLastNameFromString(String line) {
+        return splitAtString(getRestSplitAtString(getRestSplitAtString(line)));
+    }
+
+    private static String getFirstNameFromString(String line) {
+        return splitAtString(getRestSplitAtString(getRestSplitAtString(getRestSplitAtString(line))));
+    }
+
+    private static String getGenderFromString(String line) {
+        return splitAtString(getRestSplitAtString(getRestSplitAtString(getRestSplitAtString(getRestSplitAtString(line)))));
+    }
+
+    /**
+     * @formatter: on
+     */
+
     private static void printGenderAndStats() {
         String line;
-        long id = 0;
-        int boys = 0, girls = 0, grade = 0, i = 0, year9 = 0, year10 = 0, year11 = 0, year12 = 0;
-        String firstName, lastName, gender;
+        int boys = 0, girls = 0, i = 0, year9 = 0, year10 = 0, year11 = 0, year12 = 0;
         List<Student> students = new java.util.ArrayList<>(Collections.emptyList());
         int[] lastNames = new int[26];
 
@@ -104,16 +149,9 @@ public class AtkinsJLab8 {
             while ((line = br.readLine()) != null) {
                 String studentLine = line;
                 //Thanks, I hate it
-                students.add(new Student(id = Long.parseLong(splitAtString(studentLine)), grade = Integer.parseInt(splitAtString(getRestSplitAtString(studentLine))),
-                        lastName = splitAtString(getRestSplitAtString(getRestSplitAtString(studentLine))),
-                        firstName = splitAtString(getRestSplitAtString(getRestSplitAtString(getRestSplitAtString(studentLine)))),
-                        gender = splitAtString(getRestSplitAtString(getRestSplitAtString(getRestSplitAtString(getRestSplitAtString(studentLine)))))));
+                students.add(new Student(getIDFromString(studentLine), getGradeFromString(studentLine), getLastNameFromString(studentLine),
+                        getFirstNameFromString(studentLine), getGenderFromString(studentLine)));
                 i++;
-               /* System.out.println("ID: " + id);
-                System.out.println("Grade: " + grade);
-                System.out.println("Last Name: " + lastName);
-                System.out.println("First Name: " + firstName);
-                System.out.println("Gender: " + gender);**/
 
             }
         } catch (IOException exc) {
@@ -164,7 +202,42 @@ public class AtkinsJLab8 {
     }
 
     private static void bubbleSortLastName() {
+        List<Student> students = new ArrayList<>(Collections.emptyList());
+        List<Student> modifiedStudents = Collections.emptyList();
+        int[] lastNames = new int[26];
+        String line;
+        int i = 0;
 
+        try (BufferedReader br = new BufferedReader(new FileReader("classlist.txt"))) {
+            while ((line = br.readLine()) != null) {
+                String studentLine = line;
+                //Thanks, I hate it
+                students.add(new Student(getIDFromString(studentLine), getGradeFromString(studentLine), getLastNameFromString(studentLine),
+                        getFirstNameFromString(studentLine), getGenderFromString(studentLine)));
+                i++;
+
+            }
+        } catch (IOException exc) {
+            System.out.println("You goofed. ");
+            exc.printStackTrace();
+        }
+
+        modifiedStudents = students;
+
+        students = students.stream().sorted(Comparator.comparingInt(student -> student.getLastName().charAt(0)))
+                .collect(Collectors.toList());
+     /*   for (int j = 0; j < i; j++) {
+            for (int h = j; h > j - 1; h--) {
+                if (students.get(h) != null) {
+                    Student student = students.get(h);
+                    if ()
+
+                }
+            }
+        }**/
+     for (int j = 0; j < i; j++) {
+         System.out.println(students.get(j).getLastName());
+     }
     }
 
     public static void main(String[] args) {
@@ -191,25 +264,6 @@ public class AtkinsJLab8 {
                     break;
             }
         }
-    }
-
-    /**
-     * Splits the string at the first space.
-     *
-     * @param toSplit The string to split.
-     * @return Returns the phrase before the split/space.
-     */
-    private static String splitAtString(String toSplit) {
-        String toReturn = "";
-        for (int i = 0; i < toSplit.length(); i++) {
-            char character = toSplit.charAt(i);
-
-            if (Character.toString(character).equalsIgnoreCase(" ")) {
-                return toReturn;
-            }
-            toReturn += character;
-        }
-        return toReturn;
     }
 
 
