@@ -220,6 +220,7 @@ public class AtkinsJLab8 {
         //Lol
         //  students = students.stream().sorted(Comparator.comparingInt(student -> student.getLastName().charAt(0))).collect(Collectors.toList());
 
+        //Bubble sort based on last name
         for (int j = 0; j < 88; j++) {
             for (int h = 87; h > j; h--) {
                 int curChar = students[h].getLastName().charAt(0);
@@ -232,28 +233,43 @@ public class AtkinsJLab8 {
             }
         }
 
-        for (int j = 0; j < i; j++) {
-            System.out.println(students[j].getLastName());
+        writeFile(students, "lastNameClassList");
+
+        //Bubble sort based on student id
+        for (int j = 0; j < 88; j++) {
+            for (int h = 87; h > j; h--) {
+                long curChar = students[h].getStudentId();
+                long prevChar = students[h - 1].getStudentId();
+                if (prevChar > curChar) {
+                    Student prevStudent = students[h - 1];
+                    students[h - 1] = students[h];
+                    students[h] = prevStudent;
+                }
+            }
         }
 
-        File file = new File("classlist2.txt");
+        writeFile(students, "studentIDClassList");
+
+    }
+
+    private static void writeFile(Student[] students, String fileName) {
+        File file = new File(fileName + ".txt");
         try {
             file.createNewFile();
-            try (FileOutputStream fos = new FileOutputStream(file, false)) {
+            try (FileWriter fileWriter = new FileWriter(file)) {
                 for (int j = 0; j < 88; j++) {
-                    fos.write((byte) students[j].getStudentId());
-                    fos.write((byte) students[j].getGrade());
-                    fos.write(students[j].getLastName().getBytes());
-                    fos.write(students[j].getFirstName().getBytes());
-                    fos.write(students[j].getGender().getBytes());
-                    fos.close();
-                    fos.flush();
+                    fileWriter.write(students[j].getStudentId() + " ");
+                    fileWriter.write(students[j].getGrade() + " ");
+                    fileWriter.write(students[j].getLastName() + " ");
+                    fileWriter.write(students[j].getFirstName() + " ");
+                    fileWriter.write(students[j].getGender() + " ");
+                    fileWriter.write(System.getProperty("line.separator"));
                 }
+                fileWriter.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public static void main(String[] args) {
