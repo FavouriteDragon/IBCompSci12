@@ -1,10 +1,9 @@
 package main.java.john.ibcs.lab8;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.io.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
 
 public class AtkinsJLab8 {
     private static Scanner input = new Scanner(System.in);
@@ -147,10 +146,9 @@ public class AtkinsJLab8 {
 
         try (BufferedReader br = new BufferedReader(new FileReader("classlist.txt"))) {
             while ((line = br.readLine()) != null) {
-                String studentLine = line;
                 //Thanks, I hate it
-                students.add(new Student(getIDFromString(studentLine), getGradeFromString(studentLine), getLastNameFromString(studentLine),
-                        getFirstNameFromString(studentLine), getGenderFromString(studentLine)));
+                students.add(new Student(getIDFromString(line), getGradeFromString(line), getLastNameFromString(line),
+                        getFirstNameFromString(line), getGenderFromString(line)));
                 i++;
 
             }
@@ -202,18 +200,15 @@ public class AtkinsJLab8 {
     }
 
     private static void bubbleSortLastName() {
-        List<Student> students = new ArrayList<>(Collections.emptyList());
-        List<Student> modifiedStudents = Collections.emptyList();
-        int[] lastNames = new int[26];
+        Student[] students = new Student[88];
         String line;
         int i = 0;
 
         try (BufferedReader br = new BufferedReader(new FileReader("classlist.txt"))) {
             while ((line = br.readLine()) != null) {
-                String studentLine = line;
                 //Thanks, I hate it
-                students.add(new Student(getIDFromString(studentLine), getGradeFromString(studentLine), getLastNameFromString(studentLine),
-                        getFirstNameFromString(studentLine), getGenderFromString(studentLine)));
+                students[i] = new Student(getIDFromString(line), getGradeFromString(line), getLastNameFromString(line),
+                        getFirstNameFromString(line), getGenderFromString(line));
                 i++;
 
             }
@@ -222,22 +217,43 @@ public class AtkinsJLab8 {
             exc.printStackTrace();
         }
 
-        modifiedStudents = students;
+        //Lol
+        //  students = students.stream().sorted(Comparator.comparingInt(student -> student.getLastName().charAt(0))).collect(Collectors.toList());
 
-        students = students.stream().sorted(Comparator.comparingInt(student -> student.getLastName().charAt(0)))
-                .collect(Collectors.toList());
-     /*   for (int j = 0; j < i; j++) {
-            for (int h = j; h > j - 1; h--) {
-                if (students.get(h) != null) {
-                    Student student = students.get(h);
-                    if ()
-
+        for (int j = 0; j < 88; j++) {
+            for (int h = 87; h > j; h--) {
+                int curChar = students[h].getLastName().charAt(0);
+                int prevChar = students[h - 1].getLastName().charAt(0);
+                if (prevChar > curChar) {
+                    Student prevStudent = students[h - 1];
+                    students[h - 1] = students[h];
+                    students[h] = prevStudent;
                 }
             }
-        }**/
-     for (int j = 0; j < i; j++) {
-         System.out.println(students.get(j).getLastName());
-     }
+        }
+
+        for (int j = 0; j < i; j++) {
+            System.out.println(students[j].getLastName());
+        }
+
+        File file = new File("classlist2.txt");
+        try {
+            file.createNewFile();
+            try (FileOutputStream fos = new FileOutputStream(file, false)) {
+                for (int j = 0; j < 88; j++) {
+                    fos.write((byte) students[j].getStudentId());
+                    fos.write((byte) students[j].getGrade());
+                    fos.write(students[j].getLastName().getBytes());
+                    fos.write(students[j].getFirstName().getBytes());
+                    fos.write(students[j].getGender().getBytes());
+                    fos.close();
+                    fos.flush();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void main(String[] args) {
