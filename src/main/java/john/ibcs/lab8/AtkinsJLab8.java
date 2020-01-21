@@ -257,7 +257,7 @@ public class AtkinsJLab8 {
         try {
             file.createNewFile();
             try (FileWriter fileWriter = new FileWriter(file)) {
-                for (int j = 0; j < 88; j++) {
+                for (int j = 0; j < students.length; j++) {
                     fileWriter.write(students[j].getStudentId() + " ");
                     fileWriter.write(students[j].getGrade() + " ");
                     fileWriter.write(students[j].getLastName() + " ");

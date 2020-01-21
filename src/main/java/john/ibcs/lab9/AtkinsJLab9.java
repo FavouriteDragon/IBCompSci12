@@ -77,12 +77,22 @@ public class AtkinsJLab9 {
         System.out.println("Please enter two numbers for the multiplicationinator 9000!");
         int firstNum = handleInputs(input.next()), secondNum = handleInputs(input.next());
 
-        for (int width = 1; width < firstNum + 1; width++) {
-            for (int height =1 ; height < secondNum + 1; height++) {
+        for (int j = 0; j < firstNum; j++) {
+            for (int i = 0; i < secondNum; i++) {
+                //Top and bottom of the rectangle.
+                if (j == 0)
+                    System.out.print(i + 1 + " ");
+                else {
+                    //Width of the rectangle;
+                    if (i == 0)
+                        System.out.print(j + 1 + " ");
+                    else
+                        System.out.print((i + 1) * (j + 1) + " ");
 
+                }
             }
+            System.out.println();
         }
-
     }
 
     public static void main(String[] args) {
@@ -99,7 +109,7 @@ public class AtkinsJLab9 {
                     summationTo70000();
                     break;
                 case 2:
-                    // bubbleSortLastName();
+                    multiplicationTable();
                     break;
                 case -1:
                     System.out.print("Process terminated");
