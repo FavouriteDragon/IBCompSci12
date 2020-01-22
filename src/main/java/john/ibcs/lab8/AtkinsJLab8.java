@@ -234,6 +234,7 @@ public class AtkinsJLab8 {
         }
 
         writeFile(students, "lastNameClassList");
+        System.out.println("Last Names sorted!");
 
         //Bubble sort based on student id
         for (int j = 0; j < 88; j++) {
@@ -249,20 +250,22 @@ public class AtkinsJLab8 {
         }
 
         writeFile(students, "studentIDClassList");
+        System.out.println("Student ID's sorted!");
 
     }
 
     private static void writeFile(Student[] students, String fileName) {
         File file = new File(fileName + ".txt");
         try {
+            //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
             try (FileWriter fileWriter = new FileWriter(file)) {
-                for (int j = 0; j < students.length; j++) {
-                    fileWriter.write(students[j].getStudentId() + " ");
-                    fileWriter.write(students[j].getGrade() + " ");
-                    fileWriter.write(students[j].getLastName() + " ");
-                    fileWriter.write(students[j].getFirstName() + " ");
-                    fileWriter.write(students[j].getGender() + " ");
+                for (Student student : students) {
+                    fileWriter.write(student.getStudentId() + " ");
+                    fileWriter.write(student.getGrade() + " ");
+                    fileWriter.write(student.getLastName() + " ");
+                    fileWriter.write(student.getFirstName() + " ");
+                    fileWriter.write(student.getGender() + " ");
                     fileWriter.write(System.getProperty("line.separator"));
                 }
                 fileWriter.flush();
@@ -279,7 +282,7 @@ public class AtkinsJLab8 {
             System.out.println("Please choose a program, using numbers 1 to 3. Choose -1 to terminate the program.");
             System.out.println();
             System.out.println("1: Print student's genders, grade levels, and first letters of their last name.");
-            System.out.println("2: Bubble sort students based on their last name.");
+            System.out.println("2: Bubble sort students based on their last name, then generate files.");
             number = handleInputs(input.next());
             switch (number) {
                 case 1:
