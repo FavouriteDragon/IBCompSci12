@@ -5,11 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c12911b2-f4d8-45cc-bcd4-0b3fc816cbd8" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab10/AtkinsJLab10.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lastNameClassList.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/IBCS/META-INF/IBCS.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/Maths$RandomNumberGeneratorHolder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/Maths.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab4/AtkinsJLab4.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab4/AtkinsJLab4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab5/AtkinsJLab5.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab5/AtkinsJLab5.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab6/AtkinsJLab6.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab6/AtkinsJLab6.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJLab7.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJLab7.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJNumberTheory.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJNumberTheory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/Maths.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab9/AtkinsJLab9.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab9/AtkinsJLab9.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studentIDClassList.txt" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -42,7 +52,10 @@
   <component name="ProjectId" id="1Uqe91NCVffr7o4PPpqDWYSd9a9" />
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$USER_HOME$/AppData/Local/Programs/Git/bin/git.exe" />
-    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -63,7 +76,20 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.AtkinsJLab8">
+  <component name="RunManager" selected="Application.AtkinsJLab10">
+    <configuration name="AtkinsJLab10" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.lab10.AtkinsJLab10" />
+      <module name="IBCompSci12" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="main.java.john.ibcs.lab10.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="AtkinsJLab6" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.lab6.AtkinsJLab6" />
       <module name="IBCompSci12" />

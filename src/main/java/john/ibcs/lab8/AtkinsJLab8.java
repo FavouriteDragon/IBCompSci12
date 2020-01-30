@@ -200,7 +200,7 @@ public class AtkinsJLab8 {
     }
 
     private static void bubbleSortLastName() {
-        Student[] students = new Student[88];
+        Student[] students = new Student[100000];
         String line;
         int i = 0;
 
@@ -221,8 +221,9 @@ public class AtkinsJLab8 {
         //  students = students.stream().sorted(Comparator.comparingInt(student -> student.getLastName().charAt(0))).collect(Collectors.toList());
 
         //Bubble sort based on last name
-        for (int j = 0; j < 88; j++) {
-            for (int h = 87; h > j; h--) {
+        int size = i;
+        for (int j = 0; j < size; j++) {
+            for (int h = size - 1; h > j; h--) {
                 int curChar = students[h].getLastName().charAt(0);
                 int prevChar = students[h - 1].getLastName().charAt(0);
                 if (prevChar > curChar) {
@@ -237,8 +238,8 @@ public class AtkinsJLab8 {
         System.out.println("Last Names sorted!");
 
         //Bubble sort based on student id
-        for (int j = 0; j < 88; j++) {
-            for (int h = 87; h > j; h--) {
+        for (int j = 0; j < size; j++) {
+            for (int h = size - 1; h > j; h--) {
                 long curChar = students[h].getStudentId();
                 long prevChar = students[h - 1].getStudentId();
                 if (prevChar > curChar) {
