@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c12911b2-f4d8-45cc-bcd4-0b3fc816cbd8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab9/AtkinsJLab9.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab9/AtkinsJLab9.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -64,7 +63,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.AtkinsJLab8">
+  <component name="RunManager" selected="Application.AtkinsJLab9">
     <configuration name="AtkinsJLab10" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.lab10.AtkinsJLab10" />
       <module name="IBCompSci12" />
@@ -157,50 +156,9 @@
       </map>
     </option>
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
-          <line>266</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
-          <line>267</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
-          <line>268</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
-          <line>269</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
-          <line>270</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
-          <line>271</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
-          <line>252</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
-          <line>236</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/IBCompSci12$AtkinsJLab9.ic" NAME="AtkinsJLab9 Coverage Results" MODIFIED="1580754697778" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>main.java.john.ibcs.lab9.*</FILTER>
+    </SUITE>
   </component>
 </project>
