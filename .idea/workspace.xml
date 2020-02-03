@@ -5,19 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c12911b2-f4d8-45cc-bcd4-0b3fc816cbd8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab10/AtkinsJLab10.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/IBCS/META-INF/IBCS.kotlin_module" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/Maths$RandomNumberGeneratorHolder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/Maths.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab4/AtkinsJLab4.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab4/AtkinsJLab4.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab5/AtkinsJLab5.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab5/AtkinsJLab5.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab6/AtkinsJLab6.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab6/AtkinsJLab6.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJLab7.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJLab7.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJNumberTheory.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/IBCompSci12/main/java/john/ibcs/lab7/AtkinsJNumberTheory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/Maths.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab9/AtkinsJLab9.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab9/AtkinsJLab9.java" afterDir="false" />
     </list>
@@ -76,7 +64,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.AtkinsJLab10">
+  <component name="RunManager" selected="Application.AtkinsJLab8">
     <configuration name="AtkinsJLab10" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.lab10.AtkinsJLab10" />
       <module name="IBCompSci12" />
@@ -168,5 +156,51 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
+          <line>266</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
+          <line>267</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
+          <line>268</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
+          <line>269</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
+          <line>270</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
+          <line>271</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
+          <line>252</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java</url>
+          <line>236</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

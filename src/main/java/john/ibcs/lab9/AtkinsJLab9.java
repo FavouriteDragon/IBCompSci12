@@ -118,6 +118,10 @@ public class AtkinsJLab9 {
         double startAmount, interestRate;
     }
 
+    private static void superInterestRateCalculator() {
+
+    }
+
     private static void stackHeapVariableTest(String test) {
         test = "Huh.";
     }

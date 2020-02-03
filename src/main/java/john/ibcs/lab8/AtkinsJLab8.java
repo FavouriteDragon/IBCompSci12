@@ -234,7 +234,7 @@ public class AtkinsJLab8 {
             }
         }
 
-        writeFile(students, "lastNameClassList");
+        writeFile(students, "lastNameClassList", size);
         System.out.println("Last Names sorted!");
 
         //Bubble sort based on student id
@@ -250,24 +250,27 @@ public class AtkinsJLab8 {
             }
         }
 
-        writeFile(students, "studentIDClassList");
+        writeFile(students, "studentIDClassList", size);
         System.out.println("Student ID's sorted!");
 
     }
 
-    private static void writeFile(Student[] students, String fileName) {
+    private static void writeFile(Student[] students, String fileName, int length) {
         File file = new File(fileName + ".txt");
         try {
             //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
             try (FileWriter fileWriter = new FileWriter(file)) {
-                for (Student student : students) {
-                    fileWriter.write(student.getStudentId() + " ");
-                    fileWriter.write(student.getGrade() + " ");
-                    fileWriter.write(student.getLastName() + " ");
-                    fileWriter.write(student.getFirstName() + " ");
-                    fileWriter.write(student.getGender() + " ");
-                    fileWriter.write(System.getProperty("line.separator"));
+                if (length > 0) {
+                    for (int i = 0; i < length; i++) {
+                        Student student = students[i];
+                        fileWriter.write(student.getStudentId() + " ");
+                        fileWriter.write(student.getGrade() + " ");
+                        fileWriter.write(student.getLastName() + " ");
+                        fileWriter.write(student.getFirstName() + " ");
+                        fileWriter.write(student.getGender() + " ");
+                        fileWriter.write(System.getProperty("line.separator"));
+                    }
                 }
                 fileWriter.flush();
             }
