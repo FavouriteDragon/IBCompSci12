@@ -144,8 +144,7 @@ public class AtkinsJLab9 {
                 //Top and bottom of the rectangle.
                 if (j == 0 || j == height - 1) {
                     System.out.print(i > 0 ? " *" : "*");
-                }
-                else {
+                } else {
                     if (height % 2 != 0) {
                         //Width of the rectangle;
                         if (i == 0)
@@ -155,8 +154,7 @@ public class AtkinsJLab9 {
                                 System.out.print(" 0");
                             else System.out.print(" *");
                         }
-                    }
-                    else {
+                    } else {
                         //Width of the rectangle;
                         if (i == 0)
                             System.out.print("*");//i == 0 ? "*" : " *");
@@ -170,6 +168,63 @@ public class AtkinsJLab9 {
         }
     }
 
+    private static void morePicturePatterns() {
+        int height = 0;
+        String type;
+
+        System.out.println("Welcome to the patterninator 9000!");
+        System.out.println("Please type 'x' or 'diamond' to choose the shape.");
+        type = input.next();
+
+        System.out.println("Please type an odd integer for the height.");
+        while (height % 2 == 0) {
+            height = handleInputs(input.next());
+            System.out.println("Please enter a valid odd integer.");
+        }
+
+        switch (type) {
+            case "x":
+                break;
+            case "diamond":
+                printDiamond(height);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private static void printDiamond(int height) {
+        int middle = (height + 1) / 2;
+        int spacing = (middle + 1) / 2;
+        //Height
+        for (int j = 0; j < height; j++) {
+            //Width
+            for (int i = 0; i < j + 1; i++) {
+                if (j < middle) {
+                    for (int h = j + 1; h < spacing; h++)
+                        System.out.print(" ");
+                    if (i == 0 || i == j)
+                        System.out.print("*");
+                    else System.out.print(" ");
+                }
+                else if (j > middle) {
+                  for (int h = 0; h < j + 1 - middle; h++)
+                       System.out.print(" ");
+                    if (i == 0 || i == j)
+                        System.out.print("*");
+                    else System.out.print(" ");
+                }
+                else {
+                    for (int h = 0; h < middle; h++) {
+                        if (h == 0 || h == middle - 1)
+                            System.out.print("*");
+                        else System.out.print(" ");
+                    }
+                }
+            }
+            System.out.println();
+        }
+    }
 
     private static void potShotsAtPi() {
         long number, totalDartsinCircle = 0;
@@ -232,6 +287,9 @@ public class AtkinsJLab9 {
                     break;
                 case 6:
                     picturePattern();
+                    break;
+                case 7:
+                    morePicturePatterns();
                     break;
                 case 8:
                     potShotsAtPi();

@@ -217,9 +217,6 @@ public class AtkinsJLab8 {
             exc.printStackTrace();
         }
 
-        //Lol
-        //  students = students.stream().sorted(Comparator.comparingInt(student -> student.getLastName().charAt(0))).collect(Collectors.toList());
-
         //Bubble sort based on last name
         int size = i;
         for (int j = 0; j < size; j++) {
