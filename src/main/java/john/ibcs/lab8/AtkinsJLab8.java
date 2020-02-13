@@ -1,9 +1,8 @@
 package main.java.john.ibcs.lab8;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class AtkinsJLab8 {
     private static Scanner input = new Scanner(System.in);
@@ -23,7 +22,7 @@ public class AtkinsJLab8 {
         try {
             d = Double.parseDouble(input);
         } catch (NullPointerException | NumberFormatException e) {
-            d = -2;
+            d = Double.NEGATIVE_INFINITY;
         }
         return d;
     }
@@ -36,35 +35,16 @@ public class AtkinsJLab8 {
         return isNumeric(input) && sanitizeDecimals(getNumFromString(input));
     }
 
-    //Makes sure the number is a decimal and not a string.
-    private static double handleDecimalInputs(String typed) {
-        Number number = isNumeric(typed) ? getNumFromString(typed).doubleValue() : -2;
-        while (number.intValue() == -2) {
-            System.out.println("Please enter a valid number. That number is invalid.");
-            typed = input.next();
-            number = isNumeric(typed) ? getNumFromString(typed).doubleValue() : -2;
-        }
-        return number.doubleValue();
-    }
 
     //The same thing as above, but only takes integers.
     private static int handleInputs(String typed) {
         Number number = sanitizeInputs(typed) ? getNumFromString(typed).intValue() : -2;
-        while (number.intValue() == -2) {
+        while (number.doubleValue() == Double.NEGATIVE_INFINITY) {
             System.out.println("Please enter a valid number. That number is invalid.");
             typed = input.next();
             number = sanitizeInputs(typed) ? getNumFromString(typed).intValue() : -2;
         }
         return number.intValue();
-    }
-
-    private static int handlePositiveInputs(String typed, int min, int max) {
-        int number = handleInputs(typed);
-        while (number <= 0) {
-            System.out.println("Please input a whole number greater than " + min + " and less than " + max + ".");
-            number = handleInputs(input.next());
-        }
-        return number;
     }
 
     /**
@@ -141,25 +121,25 @@ public class AtkinsJLab8 {
     private static void printGenderAndStats() {
         String line;
         int boys = 0, girls = 0, i = 0, year9 = 0, year10 = 0, year11 = 0, year12 = 0;
-        List<Student> students = new java.util.ArrayList<>(Collections.emptyList());
+        Student[] students = new Student[10000];
         int[] lastNames = new int[26];
 
         try (BufferedReader br = new BufferedReader(new FileReader("classlist.txt"))) {
             while ((line = br.readLine()) != null) {
                 //Thanks, I hate it
-                students.add(new Student(getIDFromString(line), getGradeFromString(line), getLastNameFromString(line),
-                        getFirstNameFromString(line), getGenderFromString(line)));
+                students[i] = new Student(getIDFromString(line), getGradeFromString(line), getLastNameFromString(line),
+                        getFirstNameFromString(line), getGenderFromString(line));
                 i++;
-
             }
+
         } catch (IOException exc) {
             System.out.println("You goofed. ");
             exc.printStackTrace();
         }
 
         for (int j = 0; j < i; j++) {
-            if (students.get(j) != null) {
-                Student student = students.get(j);
+            if (students[j] != null) {
+                Student student = students[j];
                 if (student.getGender().equalsIgnoreCase("male"))
                     boys++;
                 else girls++;
@@ -206,6 +186,7 @@ public class AtkinsJLab8 {
 
         try (BufferedReader br = new BufferedReader(new FileReader("classlist.txt"))) {
             while ((line = br.readLine()) != null) {
+                br.lines().collect(Collectors.toList());
                 //Thanks, I hate it
                 students[i] = new Student(getIDFromString(line), getGradeFromString(line), getLastNameFromString(line),
                         getFirstNameFromString(line), getGenderFromString(line));
@@ -252,6 +233,14 @@ public class AtkinsJLab8 {
 
     }
 
+    //Quick file writing method.
+
+    /**
+     *
+     * @param students Array of students to write
+     * @param fileName The name of the sorted file
+     * @param length The amount of students to sort into the file
+     */
     private static void writeFile(Student[] students, String fileName, int length) {
         File file = new File(fileName + ".txt");
         try {
@@ -299,41 +288,6 @@ public class AtkinsJLab8 {
                     System.out.println("That number is invalid. Please type another number.");
                     break;
             }
-        }
-    }
-
-
-    public static class Student {
-        long studentId;
-        int gradeLevel;
-        String firstName, lastName, gender;
-
-        Student(long studentId, int gradeLevel, String lastName, String firstName, String gender) {
-            this.studentId = studentId;
-            this.gradeLevel = gradeLevel;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.gender = gender;
-        }
-
-        public int getGrade() {
-            return this.gradeLevel;
-        }
-
-        public long getStudentId() {
-            return this.studentId;
-        }
-
-        public String getFirstName() {
-            return this.firstName;
-        }
-
-        public String getLastName() {
-            return this.lastName;
-        }
-
-        public String getGender() {
-            return this.gender;
         }
     }
 }

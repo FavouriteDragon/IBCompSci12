@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class AtkinsJLab9 {
     private static Scanner input = new Scanner(System.in);
 
-    //Util methods
+    /* Util Methods */
     private static boolean isNumeric(String input) {
         try {
             Double.parseDouble(input);
@@ -23,7 +23,7 @@ public class AtkinsJLab9 {
         try {
             d = Double.parseDouble(input);
         } catch (NullPointerException | NumberFormatException e) {
-            d = -2;
+            d = Double.NEGATIVE_INFINITY;
         }
         return d;
     }
@@ -36,21 +36,10 @@ public class AtkinsJLab9 {
         return isNumeric(input) && sanitizeDecimals(getNumFromString(input));
     }
 
-    //Makes sure the number is a decimal and not a string.
-    private static double handleDecimalInputs(String typed) {
-        Number number = isNumeric(typed) ? getNumFromString(typed).doubleValue() : -2;
-        while (number.intValue() == -2) {
-            System.out.println("Please enter a valid number. That number is invalid.");
-            typed = input.next();
-            number = isNumeric(typed) ? getNumFromString(typed).doubleValue() : -2;
-        }
-        return number.doubleValue();
-    }
-
     //The same thing as above, but only takes integers.
     private static int handleInputs(String typed) {
         Number number = sanitizeInputs(typed) ? getNumFromString(typed).intValue() : -2;
-        while (number.intValue() == -2) {
+        while (number.doubleValue() == Double.NEGATIVE_INFINITY) {
             System.out.println("Please enter a valid number. That number is invalid.");
             typed = input.next();
             number = sanitizeInputs(typed) ? getNumFromString(typed).intValue() : -2;
@@ -58,14 +47,7 @@ public class AtkinsJLab9 {
         return number.intValue();
     }
 
-    private static int handlePositiveInputs(String typed, int min, int max) {
-        int number = handleInputs(typed);
-        while (number <= 0) {
-            System.out.println("Please input a whole number greater than " + min + " and less than " + max + ".");
-            number = handleInputs(input.next());
-        }
-        return number;
-    }
+    /* End util methods */
 
     private static void summationTo70000() {
         System.out.println("Summationinator 70000!");
@@ -99,17 +81,17 @@ public class AtkinsJLab9 {
     }
 
     private static void fibonacciSequence() {
-        List<Integer> fibNumbers = new ArrayList<>();
+       int[] fibNumbers = new int[Integer.MAX_VALUE];
 
-        System.out.println("Welcome to the Fibonacciinator 10,000! Please enter what fibonacci number you want.");
+        System.out.println("Welcome to the Fibonacciinator 10,000! Please enter what fibonacci number you want, below the max value of an integer in java.");
         int number = handleInputs(input.next());
 
         for (int i = 0; i < number; i++) {
             if (i > 1) {
-                fibNumbers.add(fibNumbers.get(i - 1) + fibNumbers.get(i - 2));
-            } else fibNumbers.add(i);
+                fibNumbers[i] = fibNumbers[i - 1] + fibNumbers[i - 2];
+            } else fibNumbers[i] = i;
         }
-        System.out.println("The fibonacci number you want is " + fibNumbers.get(number - 1) + ".");
+        System.out.println("The fibonacci number you want is " + fibNumbers[number - 1] + ".");
     }
 
     private static void interestRateCalculator() {
@@ -125,9 +107,6 @@ public class AtkinsJLab9 {
         System.out.println("Your balance after 30 years is $" + endAmount + ".");
     }
 
-    private static void superInterestRateCalculator() {
-        double startAmount, interestRate, numberOfCompounds, monthlyPayments, endAmount;
-    }
 
     private static void picturePattern() {
         double height, width;
@@ -142,10 +121,10 @@ public class AtkinsJLab9 {
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
                 //Top and bottom of the rectangle.
-                if (j == 0 || j == height - 1) {
+                if (j == 0) {// || j == height - 1) {
                     System.out.print(i > 0 ? " *" : "*");
                 } else {
-                    if (height % 2 != 0) {
+                    if (j % 2 != 0) {
                         //Width of the rectangle;
                         if (i == 0)
                             System.out.print("*");//i == 0 ? "*" : " *");
@@ -184,6 +163,7 @@ public class AtkinsJLab9 {
 
         switch (type) {
             case "x":
+                drawX(height);
                 break;
             case "diamond":
                 printDiamond(height);
@@ -197,37 +177,40 @@ public class AtkinsJLab9 {
         int middle = (height + 1) / 2;
         int spacing = (middle + 1) / 2;
         //Height
-        for (int j = 0; j < height; j++) {
+        for (int h = 0; h < height; h++) {
             //Width
-            for (int i = 0; i < j + 1; i++) {
-                if (j < middle) {
-                    for (int h = j + 1; h < spacing; h++)
-                        System.out.print(" ");
-                    if (i == 0 || i == j)
-                        System.out.print("*");
-                    else System.out.print(" ");
+            for (int w = 0; w < height; w++) {
+                //Spacing
+                for (int s = 0; s < (h > middle - 1 ? h - middle : h); s++) {
+                    s = Math.min(s, spacing);
+                    System.out.print(" ");
                 }
-                else if (j > middle) {
-                  for (int h = 0; h < j + 1 - middle; h++)
-                       System.out.print(" ");
-                    if (i == 0 || i == j)
-                        System.out.print("*");
-                    else System.out.print(" ");
+                System.out.println("*");
+            }
+            System.out.println();
+        }
+    }
+
+    private static void drawX(int height) {
+        int middle = (height + 1) / 2;
+        int spacing = (middle + 1) / 2;
+        //Height
+        for (int h = 0; h < height; h++) {
+            //Width
+            for (int w = 0; w < height; w++) {
+                //Spacing
+                for (int s = 0; s < (h > middle - 1 ? h - middle : h); s++) {
+                    s = Math.min(s, spacing);
+                    System.out.print(" ");
                 }
-                else {
-                    for (int h = 0; h < middle; h++) {
-                        if (h == 0 || h == middle - 1)
-                            System.out.print("*");
-                        else System.out.print(" ");
-                    }
-                }
+                System.out.println("*");
             }
             System.out.println();
         }
     }
 
     private static void potShotsAtPi() {
-        long number, totalDartsinCircle = 0;
+        long number, totalDartsInCircle = 0;
         double xPos, yPos, circleArea, piGuess;
 
         System.out.println("How many dart throws do you want?");
@@ -241,11 +224,11 @@ public class AtkinsJLab9 {
             yPos = clip(yPos, 0, 1);
 
             if (xPos * xPos + yPos * yPos <= 1) {
-                totalDartsinCircle++;
+                totalDartsInCircle++;
             }
         }
 
-        circleArea = ((float) totalDartsinCircle / (float) i) * 4;
+        circleArea = ((float) totalDartsInCircle / (float) i) * 4;
         piGuess = circleArea;
 
         System.out.println("The area of your circle, based on " + number + " guesses, is " + piGuess + "cm^2.");
@@ -264,7 +247,6 @@ public class AtkinsJLab9 {
             System.out.println("2: Create a multiplication table!");
             System.out.println("3: Get any number in the fibonacci sequence!");
             System.out.println("4: Basic interest rate calculator.");
-            System.out.println("5: Super interest rate calculator.");
             System.out.println("6: Picture pattern 1.");
             System.out.println("7: More picture patterns!");
             System.out.println("8: Potshots at Pi!");
@@ -282,10 +264,7 @@ public class AtkinsJLab9 {
                 case 4:
                     interestRateCalculator();
                     break;
-                case 5:
-                    superInterestRateCalculator();
-                    break;
-                case 6:
+                  case 6:
                     picturePattern();
                     break;
                 case 7:
