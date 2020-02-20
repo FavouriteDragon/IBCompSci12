@@ -1,7 +1,5 @@
 package main.java.john.ibcs.lab9;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -81,7 +79,7 @@ public class AtkinsJLab9 {
     }
 
     private static void fibonacciSequence() {
-       int[] fibNumbers = new int[Integer.MAX_VALUE];
+        int[] fibNumbers = new int[Integer.MAX_VALUE];
 
         System.out.println("Welcome to the Fibonacciinator 10,000! Please enter what fibonacci number you want, below the max value of an integer in java.");
         int number = handleInputs(input.next());
@@ -156,6 +154,7 @@ public class AtkinsJLab9 {
         type = input.next();
 
         System.out.println("Please type an odd integer for the height.");
+        height = handleInputs(input.next());
         while (height % 2 == 0) {
             height = handleInputs(input.next());
             System.out.println("Please enter a valid odd integer.");
@@ -174,36 +173,44 @@ public class AtkinsJLab9 {
     }
 
     private static void printDiamond(int height) {
-        int middle = (height + 1) / 2;
-        int spacing = (middle + 1) / 2;
-        //Height
-        for (int h = 0; h < height; h++) {
-            //Width
-            for (int w = 0; w < height; w++) {
-                //Spacing
-                for (int s = 0; s < (h > middle - 1 ? h - middle : h); s++) {
-                    s = Math.min(s, spacing);
-                    System.out.print(" ");
-                }
-                System.out.println("*");
+        int print;
+        for (int i = -((height - 1) / 2); i < ((height - 1) / 2) + 1; i++) { // "Centers" the numbers
+            for (int l = 0; l < Math.abs(i); l++) {// Edge spacing
+                System.out.print(" ");
+            }
+            System.out.print("*");
+            print = 0;
+            for (int l = Math.abs(i) * 2 + 2; l < height; l++) { // Center spacing
+                print = 1;
+                System.out.print(" ");
+            }
+            if (print == 1) {
+                System.out.print("*"); // If a second asterisk is needed, it goes there
+            }
+            for (int l = 0; l < Math.abs(i); l++) {
+                System.out.print(" ");
             }
             System.out.println();
         }
     }
 
     private static void drawX(int height) {
-        int middle = (height + 1) / 2;
-        int spacing = (middle + 1) / 2;
-        //Height
-        for (int h = 0; h < height; h++) {
-            //Width
-            for (int w = 0; w < height; w++) {
-                //Spacing
-                for (int s = 0; s < (h > middle - 1 ? h - middle : h); s++) {
-                    s = Math.min(s, spacing);
-                    System.out.print(" ");
-                }
-                System.out.println("*");
+        int print;
+        for (int i = -((height - 1) / 2); i < ((height - 1) / 2) + 1; i++) {
+            for (int l = 0; l < ((height - 1) / 2) - Math.abs(i); l++) { // Edge spacing
+                System.out.print(" ");
+            }
+            System.out.print("*");
+            print = 0;
+            for (int l = 0; l < Math.abs(i) * 2 - 1; l++) { // Center spacing
+                print = 1;
+                System.out.print(" ");
+            }
+            if (print == 1) {
+                System.out.print("*"); // Again, if it needs another asterisk
+            }
+            for (int l = 0; l < ((height - 1) / 2) - Math.abs(i); l++) { // More edge spacing
+                System.out.print(" ");
             }
             System.out.println();
         }
@@ -264,7 +271,7 @@ public class AtkinsJLab9 {
                 case 4:
                     interestRateCalculator();
                     break;
-                  case 6:
+                case 6:
                     picturePattern();
                     break;
                 case 7:

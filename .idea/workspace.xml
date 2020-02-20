@@ -5,14 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c12911b2-f4d8-45cc-bcd4-0b3fc816cbd8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/AtkinsJPrintedCode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab11/AtkinsJLab11.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/Student.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lastNameClassList.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab8/AtkinsJLab8.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/AtkinsJPrintedCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/SimpleSceneGraphDemo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab9/AtkinsJLab9.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab9/AtkinsJLab9.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studentIDClassList.txt" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -148,6 +143,24 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="SimpleSceneGraphDemo" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.SimpleSceneGraphDemo" />
+      <module name="IBCompSci12" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="main.java.john.ibcs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.SimpleSceneGraphDemo" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
