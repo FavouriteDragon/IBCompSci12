@@ -38,17 +38,19 @@ public class AtkinsJLab11 extends Application {
         circle.setRadius(100 * scale);
         circle.setFill(Color.TRANSPARENT);
 
-
         rootNode.setAlignment(Pos.CENTER);
         rootNode.layout();
         primaryStage.setScene(scene);
 
         colourButton.setText("Colour");
-        colourButton.setAlignment(Pos.BOTTOM_CENTER);
-        colourButton.setTranslateX(-20);
+        colourButton.setMinSize(colourButton.getMinWidth() * scale, colourButton.getMinHeight() * scale);
+        colourButton.setTranslateX(scene.getWidth() / 2 - colourButton.getMinWidth());
+        colourButton.setTranslateY(150 * scale);
+
         scaleButton.setText("Scale");
-        scaleButton.setAlignment(Pos.BOTTOM_CENTER);
-        scaleButton.setTranslateX(20);
+        scaleButton.setMinSize(colourButton.getMinWidth() * scale, colourButton.getMinHeight() * scale);
+        scaleButton.setTranslateX(scene.getWidth() / 2 - colourButton.getMinWidth());
+        scaleButton.setTranslateY(150 * scale);
 
         //Event handlers
         //Colours

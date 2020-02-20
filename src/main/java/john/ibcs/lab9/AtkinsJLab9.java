@@ -174,13 +174,13 @@ public class AtkinsJLab9 {
 
     private static void printDiamond(int height) {
         int print;
-        for (int i = -((height - 1) / 2); i < ((height - 1) / 2) + 1; i++) { // "Centers" the numbers
+        for (int i = -((height - 1) / 2); i < ((height - 1) / 2) + 1; i++) { // "Centres" the numbers
             for (int l = 0; l < Math.abs(i); l++) {// Edge spacing
                 System.out.print(" ");
             }
             System.out.print("*");
             print = 0;
-            for (int l = Math.abs(i) * 2 + 2; l < height; l++) { // Center spacing
+            for (int l = Math.abs(i) * 2 + 2; l < height; l++) { // Centre spacing
                 print = 1;
                 System.out.print(" ");
             }
@@ -202,7 +202,7 @@ public class AtkinsJLab9 {
             }
             System.out.print("*");
             print = 0;
-            for (int l = 0; l < Math.abs(i) * 2 - 1; l++) { // Center spacing
+            for (int l = 0; l < Math.abs(i) * 2 - 1; l++) { // Centre spacing
                 print = 1;
                 System.out.print(" ");
             }
