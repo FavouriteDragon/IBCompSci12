@@ -33,7 +33,7 @@ public class AtkinsJLab11 extends Application {
         double circlePosX = scene.getHeight() / 2, circlePosY = scene.getHeight() / 2;
         double scale = 1;
         int[] colours = new int[3];
-        int state = -;
+        int state = 0;
         colours[0] = colours[1] = colours[2] = 0;
 
         circle.setCenterX(circlePosX * scale);
@@ -73,7 +73,7 @@ public class AtkinsJLab11 extends Application {
 
     private void toggleColour(int[] colours, int state) {
       switch (state) {
-          
+
       }
     }
 }
