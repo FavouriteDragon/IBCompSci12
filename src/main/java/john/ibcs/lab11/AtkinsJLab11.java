@@ -50,10 +50,9 @@ public class AtkinsJLab11 extends Application {
         colourButton.setTranslateX(scene.getWidth() / 2 - colourButton.getMinWidth());
         colourButton.setTranslateY(150 * scale);
         colourButton.setOnAction(event -> {
-            int state = state1 == null ? 0 : state1;
-            state = state > 2 ? 0 : state++;
-            state1 = state;
-            toggleColour(colours, state);
+            toggleColour(colours, Color.rgb(colours[0], colours[1], colours[2]));
+            circle.setStroke(Color.rgb(colours[0], colours[1], colours[2]));
+            line.setStroke(Color.rgb(colours[0], colours[1], colours[2]));
         });
 
         scaleButton.setText("Scale");
@@ -63,8 +62,7 @@ public class AtkinsJLab11 extends Application {
 
         //Event handlers
         //Colours
-        circle.setStroke(Color.rgb(colours[0], colours[1], colours[2]));
-        line.setStroke(Color.rgb(colours[0], colours[1], colours[2]));
+
 
 
         rootNode.getChildren().addAll(colourButton, scaleButton, circle);
@@ -73,23 +71,20 @@ public class AtkinsJLab11 extends Application {
 
     }
 
-    private void toggleColour(int[] colours, int state) {
-      switch (state) {
-          case 0:
-              colours[0] = colours[1] = colours[2] = 0;
-              break;
-          case 1:
-              colours[0] = 255;
-          case 2:
-              colours[0] = 0;
-              colours[1] = 255;
-              break;
-          case 3:
-              colours[1] = 0;
-              colours[2] = 255;
-              break;
-          default:
-              break;
+    private void toggleColour(int[] colours, Color initialColour) {
+      if (initialColour == Color.BLACK) {
+          colours[0] = (int) (255 * Color.RED.getRed());
       }
+      else if (initialColour == Color.RED) {
+          colours[0] = 0;
+          colours[2] = (int) (255 * Color.BLUE.getBlue());
+      }
+      else if (initialColour == Color.BLUE) {
+          colours[2] = 0;
+          colours[1] = (int) (255 * Color.GREEN.getGreen());
+      }
+      else if (initialColour == Color.GREEN)
+          colours[0] = colours[1] = colours[2] = 0;
     }
+
 }
