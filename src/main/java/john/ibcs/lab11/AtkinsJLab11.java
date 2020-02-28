@@ -1,6 +1,8 @@
 package main.java.john.ibcs.lab11;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -31,6 +33,7 @@ public class AtkinsJLab11 extends Application {
         double circlePosX = scene.getHeight() / 2, circlePosY = scene.getHeight() / 2;
         double scale = 1;
         int[] colours = new int[3];
+        int state = -;
         colours[0] = colours[1] = colours[2] = 0;
 
         circle.setCenterX(circlePosX * scale);
@@ -46,6 +49,10 @@ public class AtkinsJLab11 extends Application {
         colourButton.setMinSize(colourButton.getMinWidth() * scale, colourButton.getMinHeight() * scale);
         colourButton.setTranslateX(scene.getWidth() / 2 - colourButton.getMinWidth());
         colourButton.setTranslateY(150 * scale);
+        colourButton.setOnAction(event -> {
+            state = state > 2 ? 0 : state++;
+            toggleColour(colours, state);
+        });
 
         scaleButton.setText("Scale");
         scaleButton.setMinSize(colourButton.getMinWidth() * scale, colourButton.getMinHeight() * scale);
@@ -62,5 +69,11 @@ public class AtkinsJLab11 extends Application {
         primaryStage.show();
 
 
+    }
+
+    private void toggleColour(int[] colours, int state) {
+      switch (state) {
+          
+      }
     }
 }

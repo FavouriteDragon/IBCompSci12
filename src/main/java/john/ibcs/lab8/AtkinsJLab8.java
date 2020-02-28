@@ -2,6 +2,7 @@ package main.java.john.ibcs.lab8;
 
 import java.io.*;
 import java.util.Scanner;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class AtkinsJLab8 {
