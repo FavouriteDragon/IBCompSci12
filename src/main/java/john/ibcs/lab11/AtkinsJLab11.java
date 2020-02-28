@@ -33,7 +33,7 @@ public class AtkinsJLab11 extends Application {
         double circlePosX = scene.getHeight() / 2, circlePosY = scene.getHeight() / 2;
         double scale = 1;
         int[] colours = new int[3];
-        int state = 0;
+        int state1;
         colours[0] = colours[1] = colours[2] = 0;
 
         circle.setCenterX(circlePosX * scale);
@@ -50,7 +50,9 @@ public class AtkinsJLab11 extends Application {
         colourButton.setTranslateX(scene.getWidth() / 2 - colourButton.getMinWidth());
         colourButton.setTranslateY(150 * scale);
         colourButton.setOnAction(event -> {
+            int state = state1 == null ? 0 : state1;
             state = state > 2 ? 0 : state++;
+            state1 = state;
             toggleColour(colours, state);
         });
 
@@ -73,7 +75,21 @@ public class AtkinsJLab11 extends Application {
 
     private void toggleColour(int[] colours, int state) {
       switch (state) {
-
+          case 0:
+              colours[0] = colours[1] = colours[2] = 0;
+              break;
+          case 1:
+              colours[0] = 255;
+          case 2:
+              colours[0] = 0;
+              colours[1] = 255;
+              break;
+          case 3:
+              colours[1] = 0;
+              colours[2] = 255;
+              break;
+          default:
+              break;
       }
     }
 }
