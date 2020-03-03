@@ -72,19 +72,22 @@ public class AtkinsJLab11 extends Application {
     }
 
     private void toggleColour(int[] colours, Color initialColour) {
-      if (initialColour == Color.BLACK) {
-          colours[0] = (int) (255 * Color.RED.getRed());
+      if (initialColour.getGreen() == 0 && initialColour.getBlue() == 0 && initialColour.getRed() == 0) {
+          colours[0] = 255;
+          colours[1] = colours[2] = 0;
       }
-      else if (initialColour == Color.RED) {
+      else if (initialColour.getGreen() == 0 && initialColour.getBlue() == 0 && initialColour.getRed() == 1) {
           colours[0] = 0;
-          colours[2] = (int) (255 * Color.BLUE.getBlue());
+          colours[2] = 255;
       }
-      else if (initialColour == Color.BLUE) {
+      else if (initialColour.getGreen() == 0 && initialColour.getBlue() == 1 && initialColour.getRed() == 0) {
           colours[2] = 0;
-          colours[1] = (int) (255 * Color.GREEN.getGreen());
+          colours[1] = 255;
       }
-      else if (initialColour == Color.GREEN)
+      else if (initialColour.getGreen() == 1 && initialColour.getBlue() == 0 && initialColour.getRed() == 0)
           colours[0] = colours[1] = colours[2] = 0;
+      else colours[0] = colours[1] = colours[2] = 0;
+
     }
 
 }

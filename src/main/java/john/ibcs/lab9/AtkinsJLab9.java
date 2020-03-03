@@ -175,19 +175,19 @@ public class AtkinsJLab9 {
     private static void printDiamond(int height) {
         int print;
         for (int i = -((height - 1) / 2); i < ((height - 1) / 2) + 1; i++) { // "Centres" the numbers
-            for (int l = 0; l < Math.abs(i); l++) {// Edge spacing
+            for (int j = 0; j < Math.abs(i); j++) {// Edge spacing
                 System.out.print(" ");
             }
             System.out.print("*");
             print = 0;
-            for (int l = Math.abs(i) * 2 + 2; l < height; l++) { // Centre spacing
+            for (int j = Math.abs(i) * 2 + 2; j < height; j++) { // Centre spacing
                 print = 1;
                 System.out.print(" ");
             }
             if (print == 1) {
                 System.out.print("*"); // If a second asterisk is needed, it goes there
             }
-            for (int l = 0; l < Math.abs(i); l++) {
+            for (int j = 0; j < Math.abs(i); j++) {
                 System.out.print(" ");
             }
             System.out.println();
@@ -197,19 +197,19 @@ public class AtkinsJLab9 {
     private static void drawX(int height) {
         int print;
         for (int i = -((height - 1) / 2); i < ((height - 1) / 2) + 1; i++) {
-            for (int l = 0; l < ((height - 1) / 2) - Math.abs(i); l++) { // Edge spacing
+            for (int j = 0; j < ((height - 1) / 2) - Math.abs(i); j++) { // Edge spacing
                 System.out.print(" ");
             }
             System.out.print("*");
             print = 0;
-            for (int l = 0; l < Math.abs(i) * 2 - 1; l++) { // Centre spacing
+            for (int j = 0; j < Math.abs(i) * 2 - 1; j++) { // Centre spacing
                 print = 1;
                 System.out.print(" ");
             }
             if (print == 1) {
                 System.out.print("*"); // Again, if it needs another asterisk
             }
-            for (int l = 0; l < ((height - 1) / 2) - Math.abs(i); l++) { // More edge spacing
+            for (int j = 0; j < ((height - 1) / 2) - Math.abs(i); j++) { // More edge spacing
                 System.out.print(" ");
             }
             System.out.println();
