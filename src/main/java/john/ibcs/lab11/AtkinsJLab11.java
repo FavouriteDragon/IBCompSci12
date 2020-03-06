@@ -22,41 +22,36 @@ public class AtkinsJLab11 extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Scale scale;
-        Circle fillInCircle, transparentCircle;
-        Text text;
-        Line line;
-        Rectangle transparentRectangle, fillInRectangle;
-        Pane objectPane, buttonPane;
-        Button scaleBtn, colorBtn;
-        VBox root;
+        Scale scale = new Scale(1, 1);
+        Text text = new Text(70, 50, "This is drawn on the canvas");
+        Line line = new Line(5, 5, 185, 185);
 
-        primaryStage.setTitle("Color and Scale");
+        Circle filledCircle = new Circle(35, 35, 23),
+                transparentCircle = new Circle(185, 185, 100);
 
-        scale = new Scale(1, 1);
+        Rectangle transparentRectangle = new Rectangle(20, 160, 40, 180),
+                filledRectangle = new Rectangle(100, 300, 275, 40);
 
-        fillInCircle = new Circle(35, 35, 23);
+        Pane objectPane = new Pane(), buttonPane = new Pane();
+        VBox root = new VBox();
 
-        text = new Text(70, 50, "This is drawn on the canvas");
+        Button scaleBtn = new Button("Scale"),
+                colourBtn = new Button("Colour");
 
-        transparentCircle = new Circle(185, 185, 100);
+
+
+        primaryStage.setTitle("Colour and Scale");
+
         transparentCircle.setFill(null);
         transparentCircle.setStroke(Color.BLACK);
 
-        line = new Line(5, 5, 185, 185);
 
-        transparentRectangle = new Rectangle(20, 160, 40, 180);
         transparentRectangle.setFill(null);
         transparentRectangle.setStroke(Color.BLACK);
 
-        //225, 40
-        fillInRectangle = new Rectangle(100, 300, 275, 40);
-
-        objectPane = new Pane();
         objectPane.getTransforms().add(scale);
-        objectPane.getChildren().addAll(fillInCircle, text, transparentCircle, line, transparentRectangle, fillInRectangle);
+        objectPane.getChildren().addAll(filledCircle, text, transparentCircle, line, transparentRectangle, filledRectangle);
 
-        scaleBtn = new Button("Scale");
         scaleBtn.setOnAction(event -> {
             scale.setX(scale.getX() * 2);
             scale.setY(scale.getY() * 2);
@@ -69,9 +64,8 @@ public class AtkinsJLab11 extends Application {
         scaleBtn.setLayoutX(150);
         scaleBtn.setLayoutY(25);
 
-        colorBtn = new Button("Color");
-        colorBtn.setOnAction(event -> {
-            //figures out which color to fill
+        colourBtn.setOnAction(event -> {
+            //figures out which colour to fill
             Paint currentColour = ((Shape) objectPane.getChildren().get(0)).getFill();
             if (currentColour.equals(Color.BLACK))
                 currentColour = Color.RED;
@@ -94,13 +88,11 @@ public class AtkinsJLab11 extends Application {
             }
         });
 
-        colorBtn.setLayoutX(250);
-        colorBtn.setLayoutY(25);
+        colourBtn.setLayoutX(250);
+        colourBtn.setLayoutY(25);
 
-        buttonPane = new Pane();
-        buttonPane.getChildren().addAll(scaleBtn, colorBtn);
+        buttonPane.getChildren().addAll(scaleBtn, colourBtn);
 
-        root = new VBox();
         root.getChildren().addAll(objectPane, buttonPane);
 
         primaryStage.setScene(new Scene(root, 400, 400));
