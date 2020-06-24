@@ -33,14 +33,14 @@ public class AtkinsJLab11 extends Application {
                 filledRectangle = new Rectangle(100, 300, 275, 40);
 
         Pane objectPane = new Pane(), buttonPane = new Pane();
-        VBox root = new VBox();
+        VBox controller = new VBox();
 
         Button scaleBtn = new Button("Scale"),
                 colourBtn = new Button("Colour");
 
 
 
-        primaryStage.setTitle("Colour and Scale");
+        primaryStage.setTitle("Scale and Colour");
 
         transparentCircle.setFill(null);
         transparentCircle.setStroke(Color.BLACK);
@@ -93,9 +93,9 @@ public class AtkinsJLab11 extends Application {
 
         buttonPane.getChildren().addAll(scaleBtn, colourBtn);
 
-        root.getChildren().addAll(objectPane, buttonPane);
+        controller.getChildren().addAll(objectPane, buttonPane);
 
-        primaryStage.setScene(new Scene(root, 400, 400));
+        primaryStage.setScene(new Scene(controller, 400, 400));
         primaryStage.show();
     }
 

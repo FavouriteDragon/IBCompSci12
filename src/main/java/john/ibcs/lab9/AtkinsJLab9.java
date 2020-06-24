@@ -243,6 +243,7 @@ public class AtkinsJLab9 {
     }
 
 
+
     public static void main(String[] args) {
         int number = 0;
 

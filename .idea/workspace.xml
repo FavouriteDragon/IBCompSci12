@@ -5,9 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c12911b2-f4d8-45cc-bcd4-0b3fc816cbd8" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/StringTesting.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab12/AtkinsJLab12.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab13/AtkinsJLab13.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab13/HardBouncingBall.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab10/AtkinsJLab10.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab10/AtkinsJLab10.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab11/AtkinsJLab11.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab11/AtkinsJLab11.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/john/ibcs/lab9/AtkinsJLab9.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/john/ibcs/lab9/AtkinsJLab9.java" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,8 +43,11 @@
     </option>
   </component>
   <component name="ProjectId" id="1Uqe91NCVffr7o4PPpqDWYSd9a9" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/AppData/Local/Programs/Git/bin/git.exe" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -50,19 +60,7 @@
       <recent name="Y:\Github\IBCompSci12\src\main\java\john\ibcs" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Application.AtkinsJLab11">
+  <component name="RunManager" selected="Application.StringTesting">
     <configuration name="AtkinsJLab10" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.lab10.AtkinsJLab10" />
       <module name="IBCompSci12" />
@@ -82,6 +80,19 @@
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="main.java.john.ibcs.lab11.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AtkinsJLab12" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.lab12.AtkinsJLab12" />
+      <module name="IBCompSci12" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="main.java.john.ibcs.lab12.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -141,6 +152,19 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="HardBouncingBall" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.lab13.HardBouncingBall" />
+      <module name="IBCompSci12" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="main.java.john.ibcs.lab13.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="SimpleSceneGraphDemo" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.SimpleSceneGraphDemo" />
       <module name="IBCompSci12" />
@@ -154,8 +178,24 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="StringTesting" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="main.java.john.ibcs.StringTesting" />
+      <module name="IBCompSci12" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="main.java.john.ibcs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.StringTesting" />
+        <item itemvalue="Application.HardBouncingBall" />
+        <item itemvalue="Application.AtkinsJLab12" />
         <item itemvalue="Application.SimpleSceneGraphDemo" />
       </list>
     </recent_temporary>
@@ -178,13 +218,50 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="480" y="140" key="#Inspections" timestamp="1591404439377">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state x="480" y="140" key="#Inspections/0.0.1707.920@0.0.1707.920" timestamp="1591404439377" />
+    <state width="1693" height="305" key="GridCell.Tab.0.bottom" timestamp="1591412550626">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state width="1693" height="305" key="GridCell.Tab.0.bottom/0.0.1707.920@0.0.1707.920" timestamp="1591412550626" />
+    <state width="1693" height="305" key="GridCell.Tab.0.center" timestamp="1591412550625">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state width="1693" height="305" key="GridCell.Tab.0.center/0.0.1707.920@0.0.1707.920" timestamp="1591412550625" />
+    <state width="1693" height="305" key="GridCell.Tab.0.left" timestamp="1591412550625">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state width="1693" height="305" key="GridCell.Tab.0.left/0.0.1707.920@0.0.1707.920" timestamp="1591412550625" />
+    <state width="1693" height="305" key="GridCell.Tab.0.right" timestamp="1591412550626">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state width="1693" height="305" key="GridCell.Tab.0.right/0.0.1707.920@0.0.1707.920" timestamp="1591412550626" />
+    <state width="1693" height="305" key="GridCell.Tab.1.bottom" timestamp="1591412550626">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state width="1693" height="305" key="GridCell.Tab.1.bottom/0.0.1707.920@0.0.1707.920" timestamp="1591412550626" />
+    <state width="1693" height="305" key="GridCell.Tab.1.center" timestamp="1591412550626">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state width="1693" height="305" key="GridCell.Tab.1.center/0.0.1707.920@0.0.1707.920" timestamp="1591412550626" />
+    <state width="1693" height="305" key="GridCell.Tab.1.left" timestamp="1591412550626">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state width="1693" height="305" key="GridCell.Tab.1.left/0.0.1707.920@0.0.1707.920" timestamp="1591412550626" />
+    <state width="1693" height="305" key="GridCell.Tab.1.right" timestamp="1591412550626">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state width="1693" height="305" key="GridCell.Tab.1.right/0.0.1707.920@0.0.1707.920" timestamp="1591412550626" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/IBCompSci12$AtkinsJLab9.ic" NAME="AtkinsJLab9 Coverage Results" MODIFIED="1580754697778" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
