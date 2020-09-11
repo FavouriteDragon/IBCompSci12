@@ -1,11 +1,19 @@
 package main.java.john.ibcs34.students;
 
-public class Students {
+import java.io.Serializable;
 
-    private Student[] students;
+public class Students implements Serializable {
+
+    private final Student[] students;
 
     public Students(Student... students) {
-        this.students = students;
+        //Did I mention how much I hate mutable objects?
+        this.students = new Student[students.length];
+        int i = 0;
+        for (Student student : students) {
+            this.students[i] = students[i];
+            i++;
+        }
     }
 
     public String[] getFirstNames() {
@@ -62,4 +70,17 @@ public class Students {
         return numbers;
     }
 
+    public Student[] getStudents() {
+        return this.students;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (Student student : students) {
+            builder.append(student.toString());
+            builder.append(System.getProperty("line.separator"));
+        }
+        return builder.toString();
+    }
 }

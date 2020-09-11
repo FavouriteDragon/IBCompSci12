@@ -1,6 +1,8 @@
 package main.java.john.ibcs34.students;
 
-public class Student {
+import java.io.Serializable;
+
+public class Student implements Serializable {
 
     private String firstName;
     private String lastName;
@@ -38,5 +40,12 @@ public class Student {
 
     public int getID() {
         return this.id;
+    }
+
+    @Override
+    public String toString() {
+        return getID() + " " + getYear() +
+                " " + getLastName() + " " + getFirstName() +
+                " " + getGender();
     }
 }
