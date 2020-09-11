@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.util.Scanner;
 
 public class StudentWindow extends Application {
 
@@ -119,9 +120,8 @@ public class StudentWindow extends Application {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             while ((line = br.readLine()) != null) {
                 //Thanks, I hate it
-                students[i] = new main.java.john.ibcs.lab8.Student(getIDFromString(line), getGradeFromString(line), getLastNameFromString(line),
-                        getFirstNameFromString(line), getGenderFromString(line));
-            i++;
+                students[i] = parseStudentFromLine(line);
+                i++;
             }
 
         } catch (IOException exc) {
@@ -133,6 +133,21 @@ public class StudentWindow extends Application {
 
     public static Student parseStudentFromLine(String line) {
         Student student = new Student("", "", "", 1, 1);
+        Scanner input = new Scanner(line);
+
+        while (input.hasNext()) {
+            int id, year;
+            String gender, lastName, firstName;
+
+            id = input.nextInt();
+            year = input.nextInt();
+            lastName = input.next();
+            firstName = input.next();
+            gender = input.next();
+
+            student = new Student(firstName, lastName, gender, year, id);
+        }
+
         return student;
 
     }
@@ -142,7 +157,7 @@ public class StudentWindow extends Application {
         String line;
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             while ((line = br.readLine()) != null) {
-               i++;
+                i++;
             }
 
         } catch (IOException exc) {
@@ -151,6 +166,7 @@ public class StudentWindow extends Application {
         }
         return i;
     }
+
     //While arrays are technically mutable and this could be a void method, that just makes everything more confusing. Treat it like it's immutable
     //for the purpose of returning.
     public static Object[] capArraySize(int size, Object[] array) {
