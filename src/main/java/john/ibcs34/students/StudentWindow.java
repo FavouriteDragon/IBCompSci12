@@ -21,6 +21,7 @@ public class StudentWindow extends Application {
         launch(args);
     }
 
+
     public static void serializeStudents(Students students) {
 
         FileOutputStream fileStream = null;
@@ -110,6 +111,61 @@ public class StudentWindow extends Application {
         }
     }
 
+    public static Students readFile(String fileName) {
+        String line;
+
+        Student[] students = new Student[readFileLength(fileName)];
+        int i = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            while ((line = br.readLine()) != null) {
+                //Thanks, I hate it
+                students[i] = new main.java.john.ibcs.lab8.Student(getIDFromString(line), getGradeFromString(line), getLastNameFromString(line),
+                        getFirstNameFromString(line), getGenderFromString(line));
+            i++;
+            }
+
+        } catch (IOException exc) {
+            System.out.println("You goofed. ");
+            exc.printStackTrace();
+        }
+        return new Students(students);
+    }
+
+    public static Student parseStudentFromLine(String line) {
+        Student student = new Student("", "", "", 1, 1);
+        return student;
+
+    }
+
+    public static int readFileLength(String fileName) {
+        int i = 0;
+        String line;
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            while ((line = br.readLine()) != null) {
+               i++;
+            }
+
+        } catch (IOException exc) {
+            System.out.println("You goofed. ");
+            exc.printStackTrace();
+        }
+        return i;
+    }
+    //While arrays are technically mutable and this could be a void method, that just makes everything more confusing. Treat it like it's immutable
+    //for the purpose of returning.
+    public static Object[] capArraySize(int size, Object[] array) {
+        Object[] newArray = new Object[size];
+        int i = 0;
+
+        while (i < size) {
+            for (Object object : array) {
+                newArray[i] = object;
+                i++;
+            }
+        }
+
+        return newArray;
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
