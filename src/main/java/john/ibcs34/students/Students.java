@@ -4,16 +4,28 @@ import java.io.Serializable;
 
 public class Students implements Serializable {
 
-    private final Student[] students;
+    private Student[] students;
 
     public Students(Student... students) {
         //Did I mention how much I hate mutable objects?
-        this.students = new Student[students.length];
-        int i = 0;
-        for (Student student : students) {
-            this.students[i] = students[i];
-            i++;
+        this.students = students.clone();
+    }
+
+    public void addStudents(Student... students) {
+        int totalSize = this.students.length + students.length;
+        Student[] tempStudents = new Student[totalSize];
+
+        for (int i = 0; i < totalSize; i++) {
+            if (i < this.students.length)
+                tempStudents[i] = this.students[i];
+            else tempStudents[i] = students[i - this.students.length];
         }
+
+        this.students = tempStudents;
+    }
+
+    public void removeStudents(Student... students) {
+
     }
 
     public String[] getFirstNames() {

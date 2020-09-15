@@ -154,9 +154,8 @@ public class StudentWindow extends Application {
 
     public static int readFileLength(String fileName) {
         int i = 0;
-        String line;
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            while ((line = br.readLine()) != null) {
+            while (br.readLine() != null) {
                 i++;
             }
 
@@ -168,7 +167,7 @@ public class StudentWindow extends Application {
     }
 
     //While arrays are technically mutable and this could be a void method, that just makes everything more confusing. Treat it like it's immutable
-    //for the purpose of returning.
+    //for the purpose of returning. Although in order to return an object you have to treat it like it's mutable. It's whack.
     public static Object[] capArraySize(int size, Object[] array) {
         Object[] newArray = new Object[size];
         int i = 0;
