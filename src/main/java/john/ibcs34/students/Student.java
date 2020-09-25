@@ -10,6 +10,15 @@ public class Student implements Serializable {
     private int year;
     private int id;
 
+    public Student() {
+        //Empty constructor. Make sure to fix any Student object that uses this.
+        this.firstName = "";
+        this.lastName = "";
+        this.gender = "";
+        this.year = 1;
+        this.id = 1;
+    }
+
     public Student(String firstName, String lastName, String gender, int year, int id) {
         this.firstName = firstName;
         this.lastName = lastName;

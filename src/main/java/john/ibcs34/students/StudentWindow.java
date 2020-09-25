@@ -133,7 +133,7 @@ public class StudentWindow extends Application {
     }
 
     public static Student parseStudentFromLine(String line) {
-        Student student = new Student("", "", "", 1, 1);
+        Student student = new Student();
         Scanner input = new Scanner(line);
 
         while (input.hasNext()) {
