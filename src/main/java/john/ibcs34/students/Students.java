@@ -25,6 +25,13 @@ public class Students implements Serializable {
     }
 
     public void removeStudents(Student... students) {
+        int i = 0;
+        for (Student student : students) {
+            if (this.students[i] == student) {
+
+            }
+            i++;
+        }
 
     }
 

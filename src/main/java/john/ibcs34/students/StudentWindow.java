@@ -14,10 +14,11 @@ public class StudentWindow extends Application {
                 new Student("James", "Atkins", "Male", 12, 759516),
         };
         Students students = new Students(studentArray);
-        //Just me testing 
-        serializeStudents(students);
+        //Just me testing
+        //students = readFile("StudentTest.txt");
+        //serializeStudents(students);
         //Make sure the read in is the same location as the write out!
-        students = deserializeStudents(new File("ObjectStorage").getPath());
+        //students = deserializeStudents(new File("ObjectStorage").getPath());
         writeTextFile(students, "StudentTest");
         launch(args);
     }
@@ -184,6 +185,10 @@ public class StudentWindow extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        System.out.println("Nice");
+
+        primaryStage.setTitle("Select Student File.");
+
+
+        //primaryStage.show();
     }
 }
