@@ -2,11 +2,11 @@ package main.java.john.ibcs34.students;
 
 import java.io.Serializable;
 
-public class Students implements Serializable {
+public class ClassRoom implements Serializable {
 
     private Student[] students;
 
-    public Students(Student... students) {
+    public ClassRoom(Student... students) {
         //Did I mention how much I hate mutable objects?
         this.students = students.clone();
     }
