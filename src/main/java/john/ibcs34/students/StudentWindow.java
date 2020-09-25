@@ -13,18 +13,18 @@ public class StudentWindow extends Application {
                 new Student("John", "Atkins", "Male", 12, 759517),
                 new Student("James", "Atkins", "Male", 12, 759516),
         };
-        Students students = new Students(studentArray);
+        ClassRoom classRoom = new ClassRoom(studentArray);
         //Just me testing
         //students = readFile("StudentTest.txt");
         //serializeStudents(students);
         //Make sure the read in is the same location as the write out!
         //students = deserializeStudents(new File("ObjectStorage").getPath());
-        writeTextFile(students, "StudentTest");
+        writeTextFile(classRoom, "StudentTest");
         launch(args);
     }
 
 
-    public static void serializeStudents(Students students) {
+    public static void serializeStudents(ClassRoom classRoom) {
 
         FileOutputStream fileStream = null;
         ObjectOutputStream objectStream = null;
@@ -33,7 +33,7 @@ public class StudentWindow extends Application {
             //Just create a temp file, literally does not matter
             fileStream = new FileOutputStream(new File("ObjectStorage").getPath());
             objectStream = new ObjectOutputStream(fileStream);
-            objectStream.writeObject(students);
+            objectStream.writeObject(classRoom);
 
             System.out.println("Done");
 
@@ -60,9 +60,9 @@ public class StudentWindow extends Application {
         }
     }
 
-    public static Students deserializeStudents(String filename) {
+    public static ClassRoom deserializeStudents(String filename) {
 
-        Students students = null;
+        ClassRoom classRoom = null;
 
         FileInputStream fileStream = null;
         ObjectInputStream objectStream = null;
@@ -70,7 +70,7 @@ public class StudentWindow extends Application {
         try {
             fileStream = new FileInputStream(filename);
             objectStream = new ObjectInputStream(fileStream);
-            students = (Students) objectStream.readObject();
+            classRoom = (ClassRoom) objectStream.readObject();
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -92,20 +92,20 @@ public class StudentWindow extends Application {
 
         }
 
-        return students;
+        return classRoom;
     }
 
     /**
-     * @param students Array of students to write
+     * @param classRoom Array of students to write
      * @param fileName The name of the sorted file
      */
-    private static void writeTextFile(Students students, String fileName) {
+    private static void writeTextFile(ClassRoom classRoom, String fileName) {
         File file = new File(fileName + ".txt");
         try {
             //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
             try (FileWriter fileWriter = new FileWriter(file)) {
-                fileWriter.write(students.toString());
+                fileWriter.write(classRoom.toString());
                 fileWriter.flush();
             }
         } catch (IOException e) {
@@ -113,7 +113,7 @@ public class StudentWindow extends Application {
         }
     }
 
-    public static Students readFile(String fileName) {
+    public static ClassRoom readFile(String fileName) {
         String line;
 
         Student[] students = new Student[readFileLength(fileName)];
@@ -129,7 +129,7 @@ public class StudentWindow extends Application {
             System.out.println("You goofed. ");
             exc.printStackTrace();
         }
-        return new Students(students);
+        return new ClassRoom(students);
     }
 
     public static Student parseStudentFromLine(String line) {
