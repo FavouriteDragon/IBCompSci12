@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -29,15 +30,13 @@ public class StudentWindow extends Application {
                 new Student("James", "Atkins", "Male", 12, 759516),
         };
         ClassRoom classRoom = new ClassRoom(studentArray);
-        classRoom.removeStudents(new Student("James", "Atkins", "Male", 12, 759516));
         //Just me testing
         //students = readFile("StudentTest.txt");
         //serializeStudents(students);
         //Make sure the read in is the same location as the write out!
         //students = deserializeStudents(new File("ObjectStorage").getPath());
-        writeTextFile(classRoom, "StudentTest");
-        System.out.println("Hm");
-        // launch(args);
+        //writeTextFile(classRoom, "StudentTest");
+        launch(args);
     }
 
 
@@ -192,10 +191,8 @@ public class StudentWindow extends Application {
         int i = 0;
 
         while (i < size) {
-            for (Object object : array) {
-                newArray[i] = object;
-                i++;
-            }
+            newArray[i] = array[i];
+            i++;
         }
 
         return newArray;
@@ -379,5 +376,28 @@ public class StudentWindow extends Application {
         vBox.getChildren().addAll(title, hBox);
 
         stage.setScene(scene);
+    }
+
+    public void launchReadFile(Stage stage) {
+        VBox vbox = new VBox();
+        TextField textField = new TextField("Choose File Path.");
+        Button confirm, cancel;
+
+    }
+
+    public ImageView getImage(String fileName) {
+
+        FileInputStream input;
+        ImageView imageView = null;
+        try {
+            input = new FileInputStream(fileName + ".png");
+            Image image = new Image(input);
+            imageView = new ImageView(image);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        return imageView;
     }
 }
