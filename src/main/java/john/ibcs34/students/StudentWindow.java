@@ -1,6 +1,22 @@
 package main.java.john.ibcs34.students;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -97,7 +113,7 @@ public class StudentWindow extends Application {
 
     /**
      * @param classRoom Array of students to write
-     * @param fileName The name of the sorted file
+     * @param fileName  The name of the sorted file
      */
     private static void writeTextFile(ClassRoom classRoom, String fileName) {
         File file = new File(fileName + ".txt");
@@ -185,10 +201,74 @@ public class StudentWindow extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        primaryStage.setTitle("Student Lab");
 
-        primaryStage.setTitle("Select Student File.");
+        //Edit is 3 dots, studentEdit and studentDelete are shown after clicking on the 3 dots.
+        Button  //Main Menu
+                sort, export, stats, add, delete, edit, create, importFile,
+                //Student specific
+                studentEdit, studentDelete;
+        TextField   //General
+                search,
+                //Student specific
+                lastName, firstName, gender, year, id;
+        Image searchIcon;
+        Text title;
+
+        VBox    //Overall layout of the title screen
+                vTitleLayout,
+                //Overall layout of the functional screen
+                vMasterLayout;
+        HBox hMasterLayout, hTitleLayout, hButtonLayoutBottom;
+        Scene titleScene, masterScene, studentScene;
+        Pane masterPane = new Pane(), studentPane = new Pane();
+
+        //Title Screen
+        vTitleLayout = new VBox();
+        hTitleLayout = new HBox();
+        titleScene = new Scene(vTitleLayout, 400, 400);
+        title = new Text();
+        create = new Button();
+        importFile = new Button();
+
+        launchTitle(vTitleLayout, hTitleLayout, titleScene, primaryStage, title, create, importFile);
 
 
-        //primaryStage.show();
+        primaryStage.show();
+    }
+
+    public void launchTitle(VBox vBox, HBox hBox, Scene scene, Stage stage, Text title, Button... buttons) {
+        Scale scale = new Scale(1, 1);
+        scale.setX(scale.getX() * 20);
+        scale.setY(scale.getY() * 20);
+
+        vBox.setAlignment(Pos.CENTER);
+        hBox.setAlignment(Pos.CENTER);
+
+        title = new Text("Students");
+        title.setFont(Font.font("System", FontPosture.ITALIC, 10));
+        title.setStroke(Color.RED);
+        title.setFill(Color.WHITE);
+        title.setStrokeWidth(0.5);
+        title.setScaleX(scale.getX() / 5);
+        title.setScaleY(scale.getY() / 5);
+
+        buttons[0] = new Button("Create Classroom");
+        buttons[1] = new Button("Import Classroom");
+        for (Button button : buttons) {
+            button.setScaleX(scale.getX() / 12.5);
+            button.setScaleY(scale.getY() / 12.5);
+            button.setStyle("-fx-background-color: #ff0000");
+            button.setTextFill(Color.WHITE);
+        }
+
+        vBox.setLayoutY(-150 + scale.getY());
+        vBox.setSpacing(scale.getY() * 2);
+        hBox.setSpacing(scale.getX() * 4);
+
+        hBox.getChildren().addAll(buttons);
+        vBox.getChildren().addAll(title, hBox);
+
+        stage.setScene(scene);
     }
 }
