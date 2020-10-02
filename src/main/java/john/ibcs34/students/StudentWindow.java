@@ -19,9 +19,11 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.TimerTask;
 
 public class StudentWindow extends Application {
 
@@ -55,6 +57,7 @@ public class StudentWindow extends Application {
             System.out.println("Done");
 
         } catch (Exception ex) {
+            System.out.println("You have no saved progress!.");
             ex.printStackTrace();
         } finally {
 
@@ -77,36 +80,47 @@ public class StudentWindow extends Application {
         }
     }
 
-    public static ClassRoom deserializeStudents(String filename) {
+    public static ClassRoom deserializeStudents(String filename, boolean check) {
 
         ClassRoom classRoom = null;
 
         FileInputStream fileStream = null;
         ObjectInputStream objectStream = null;
 
-        try {
-            fileStream = new FileInputStream(filename);
-            objectStream = new ObjectInputStream(fileStream);
-            classRoom = (ClassRoom) objectStream.readObject();
+        if (check) {
+            try {
+                fileStream = new FileInputStream(filename);
+                objectStream = new ObjectInputStream(fileStream);
+                classRoom = (ClassRoom) objectStream.readObject();
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            if (fileStream != null) {
-                try {
-                    fileStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception ex) {
+                return null;
             }
-            if (objectStream != null) {
-                try {
-                    objectStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        } else {
+            try {
+                fileStream = new FileInputStream(filename);
+                objectStream = new ObjectInputStream(fileStream);
+                classRoom = (ClassRoom) objectStream.readObject();
 
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                if (fileStream != null) {
+                    try {
+                        fileStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (objectStream != null) {
+                    try {
+                        objectStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
         }
 
         return classRoom;
@@ -243,7 +257,7 @@ public class StudentWindow extends Application {
                 //Student specific
                 lastName, firstName, gender, year, id;
         Image searchIcon;
-        Text title;
+        Text title, loadError;
 
         VBox    //Overall layout of the title screen
                 vTitleLayout,
@@ -254,6 +268,8 @@ public class StudentWindow extends Application {
         Pane masterPane = new Pane();
         ScrollPane studentPane = new ScrollPane();
         ClassRoom currentStudents = new ClassRoom(), loadedStudents = new ClassRoom();
+        TimerTask fadeLoadError;
+        Timer onUpdate, fadeError;
 
         /* Title Screen */
         vTitleLayout = new VBox();
@@ -266,8 +282,23 @@ public class StudentWindow extends Application {
         confirm = new Button("Confirm", getImage("confirm_icon"));
         cancel = new Button("Cancel", getImage("cancel_icon"));
         search = new TextField("Enter File Path.");
+        loadError = new Text("No Progress Saved.");
+
+        //Timer stuff for fading.
+        fadeError = new Timer(5, action -> {
+            loadError.setOpacity(loadError.getOpacity() - 0.0075F);
+            if (loadError.getOpacity() < 0) {
+                loadError.setStroke(Color.WHITE);
+            }
+        });
+
+        onUpdate = new Timer(2, action -> {
+            cleanTimers(fadeError, loadError);
+        });
+
 
         //This edits the buttons? I think
+        onUpdate.start();
         launchTitle(vTitleLayout, hTitleLayout, titleScene, primaryStage, title, create, importFile, load);
 
         /* Master Screen */
@@ -284,7 +315,27 @@ public class StudentWindow extends Application {
         //Title Screen Buttons
         create.setOnAction(event -> launchMain(vMasterLayout, hMasterLayout, masterScene, primaryStage, title, studentPane, add, delete));
 
-        load.setOnAction(event -> loadedStudents.addStudents(deserializeStudents("ObjectStorage")));
+        load.setOnAction(event -> {
+            if (deserializeStudents("ObjectStorage", true) == null) {
+                loadError.setStroke(Color.RED);
+                loadError.setScaleY(2);
+                loadError.setScaleX(2);
+                loadError.setOpacity(1.0F);
+
+                fadeError.restart();
+            } else {
+                loadError.setStroke(Color.WHITE);
+                loadError.setScaleY(0);
+                loadError.setScaleX(0);
+                loadedStudents.clearStudents();
+                loadedStudents.addStudents(deserializeStudents("ObjectStorage", false));
+            }
+            if (!vTitleLayout.getChildren().contains(loadError)) {
+                vTitleLayout.getChildren().add(loadError);
+                vTitleLayout.setLayoutY(vTitleLayout.getLayoutY() + loadError.getScaleY() * 14);
+            }
+        });
+
 
         importFile.setOnAction(event -> launchReadFile(primaryStage, confirm, cancel, search));
 
@@ -305,6 +356,12 @@ public class StudentWindow extends Application {
         primaryStage.show();
     }
 
+    public void cleanTimers(Timer fadeError, Text fadeText) {
+        if (fadeText.getOpacity() <= 0F) {
+            fadeText.setStroke(Color.WHITE);
+            fadeError.stop();
+        }
+    }
     //Once each scene is properly loaded you only need to switch between them.
     public void switchScene(Scene scene, Stage stage) {
         stage.setScene(scene);
