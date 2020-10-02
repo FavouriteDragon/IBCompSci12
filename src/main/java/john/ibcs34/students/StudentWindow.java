@@ -1,14 +1,12 @@
 package main.java.john.ibcs34.students;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -16,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
@@ -205,7 +204,7 @@ public class StudentWindow extends Application {
 
         //Edit is 3 dots, studentEdit and studentDelete are shown after clicking on the 3 dots.
         Button  //Main Menu
-                sort, export, stats, add, delete, edit, create, importFile,
+                sort, export, stats, add, delete, edit, create, importFile, load, save,
                 //Student specific
                 studentEdit, studentDelete;
         TextField   //General
@@ -221,17 +220,40 @@ public class StudentWindow extends Application {
                 vMasterLayout;
         HBox hMasterLayout, hTitleLayout, hButtonLayoutBottom;
         Scene titleScene, masterScene, studentScene;
-        Pane masterPane = new Pane(), studentPane = new Pane();
+        Pane masterPane = new Pane();
+        ScrollPane studentPane = new ScrollPane();
+        ClassRoom currentStudents = new ClassRoom(), loadedStudents;
 
-        //Title Screen
+        /* Title Screen */
         vTitleLayout = new VBox();
         hTitleLayout = new HBox();
         titleScene = new Scene(vTitleLayout, 400, 400);
-        title = new Text();
-        create = new Button();
-        importFile = new Button();
+        title = new Text("Students");
+        create = new Button("Create Classroom");
+        importFile = new Button("Import Classroom");
+        load = new Button("Load Classroom");
 
-        launchTitle(vTitleLayout, hTitleLayout, titleScene, primaryStage, title, create, importFile);
+        //This edits the buttons? I think
+        launchTitle(vTitleLayout, hTitleLayout, titleScene, primaryStage, title, create, importFile, load);
+
+        /* Master Screen */
+        vMasterLayout = new VBox();
+        hMasterLayout = new HBox();
+        masterScene = new Scene(vMasterLayout, 400, 400);
+
+        add = new Button("Add Student");
+        delete = new Button("Delete Student");
+        save = new Button("Save");
+        export = new Button("Export");
+        stats = new Button("Statistics");
+
+        search = new TextField();
+
+        create.setOnAction(event -> {
+            launchMain(vMasterLayout, hMasterLayout, masterScene, primaryStage, title, studentPane, add, delete);
+        });
+
+        save.setOnAction(event -> serializeStudents(currentStudents));
 
 
         primaryStage.show();
@@ -253,8 +275,76 @@ public class StudentWindow extends Application {
         title.setScaleX(scale.getX() / 5);
         title.setScaleY(scale.getY() / 5);
 
-        buttons[0] = new Button("Create Classroom");
-        buttons[1] = new Button("Import Classroom");
+        //Formats the buttons
+        for (Button button : buttons) {
+            button.setScaleX(scale.getX() / 12.5);
+            button.setScaleY(scale.getY() / 12.5);
+            button.setStyle("-fx-background-color: #ff0000");
+            button.setTextFill(Color.WHITE);
+        }
+
+        //Essentially ensures there are two buttons per line.
+        //Grabs the array length.
+        int length = buttons.length;
+        //Gets the amount of HBox's necessary.
+        int size = Math.round(length / 2F) - 1;
+        HBox[] newLines = new HBox[size];
+        for (int i = 0; i < size; i++) {
+            newLines[i] = new HBox();
+            newLines[i].setAlignment(Pos.CENTER);
+            newLines[i].setSpacing(scale.getX() * 4);
+            //Two buttons per line.
+            Button[] newLineButtons = new Button[size - i];
+            for (int j = 0; j < size - i + 1; j++) {
+                int index = (i + 1) * 2 + j - 1;
+                //Safety check
+                if (index < length)
+                    newLineButtons[i] = buttons[(i + 1) * 2 + j - 1];
+            }
+
+            newLines[i].getChildren().addAll(newLineButtons);
+        }
+
+        vBox.setLayoutY(-125 + 35 * newLines.length + scale.getY());
+        vBox.setSpacing(scale.getY() * 2);
+        hBox.setSpacing(scale.getX() * 4);
+
+        hBox.getChildren().addAll(buttons[0], buttons[1]);
+        vBox.getChildren().addAll(title, hBox);
+        vBox.getChildren().addAll(newLines);
+
+        Text author = new Text("Made by John, the slickest UI dev you've ever seen.");
+        author.setTextAlignment(TextAlignment.CENTER);
+        author.setStrokeWidth(2);
+
+        VBox pos = new VBox();
+        pos.setAlignment(Pos.BASELINE_CENTER);
+        pos.getChildren().addAll(author);
+
+        vBox.getChildren().addAll(pos);
+
+        stage.setScene(scene);
+    }
+
+    public void launchMain(VBox vBox, HBox hBox, Scene scene, Stage stage, Text title, ScrollPane pane, Button... buttons) {
+        Scale scale = new Scale(1, 1);
+        scale.setX(scale.getX() * 20);
+        scale.setY(scale.getY() * 20);
+
+        vBox.setAlignment(Pos.CENTER);
+        hBox.setAlignment(Pos.CENTER);
+
+        title = new Text("Students");
+        title.setFont(Font.font("System", FontPosture.ITALIC, 10));
+        title.setStroke(Color.RED);
+        title.setFill(Color.WHITE);
+        title.setStrokeWidth(0.5);
+        title.setScaleX(scale.getX() / 5);
+        title.setScaleY(scale.getY() / 5);
+
+        //Add and delete at top
+        buttons[0] = new Button("Add Student");
+        buttons[1] = new Button("Delete Student");
         for (Button button : buttons) {
             button.setScaleX(scale.getX() / 12.5);
             button.setScaleY(scale.getY() / 12.5);
