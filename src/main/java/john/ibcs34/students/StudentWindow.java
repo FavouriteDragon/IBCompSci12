@@ -20,6 +20,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class StudentWindow extends Application {
@@ -130,23 +131,37 @@ public class StudentWindow extends Application {
         }
     }
 
-    public static ClassRoom readFile(String fileName) {
+    /**
+     * @param fileName Name of the file. Include the extension, and the path if necesssary.
+     * @param check    Whether you're checking to see if there's a valid file. Useful for users.
+     * @return
+     */
+    public static ClassRoom readFile(String fileName, boolean check) {
         String line;
 
-        Student[] students = new Student[readFileLength(fileName)];
-        int i = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            while ((line = br.readLine()) != null) {
-                //Thanks, I hate it
-                students[i] = parseStudentFromLine(line);
-                i++;
+        if (check) {
+            try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            } catch (IOException exc) {
+                return null;
             }
+        } else {
 
-        } catch (IOException exc) {
-            System.out.println("You goofed. ");
-            exc.printStackTrace();
+            Student[] students = new Student[readFileLength(fileName)];
+            int i = 0;
+            try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+                while ((line = br.readLine()) != null) {
+                    //Thanks, I hate it
+                    students[i] = parseStudentFromLine(line);
+                    i++;
+                }
+
+            } catch (IOException exc) {
+                System.out.println("You goofed. ");
+                exc.printStackTrace();
+            }
+            return new ClassRoom(students);
         }
-        return new ClassRoom(students);
+        return new ClassRoom();
     }
 
     public static Student parseStudentFromLine(String line) {
@@ -219,6 +234,8 @@ public class StudentWindow extends Application {
         //Edit is 3 dots, studentEdit and studentDelete are shown after clicking on the 3 dots.
         Button  //Main Menu
                 sort, export, stats, add, delete, edit, create, importFile, load, save,
+                //For Importing/Exporting students
+                confirm, cancel,
                 //Student specific
                 studentEdit, studentDelete;
         TextField   //General
@@ -246,6 +263,9 @@ public class StudentWindow extends Application {
         create = new Button("Create Classroom");
         importFile = new Button("Import Classroom");
         load = new Button("Load Classroom");
+        confirm = new Button("Confirm", getImage("confirm_icon"));
+        cancel = new Button("Cancel", getImage("cancel_icon"));
+        search = new TextField("Enter File Path.");
 
         //This edits the buttons? I think
         launchTitle(vTitleLayout, hTitleLayout, titleScene, primaryStage, title, create, importFile, load);
@@ -261,18 +281,33 @@ public class StudentWindow extends Application {
         export = new Button("Export");
         stats = new Button("Statistics");
 
-        search = new TextField();
-
-        create.setOnAction(event -> {
-            launchMain(vMasterLayout, hMasterLayout, masterScene, primaryStage, title, studentPane, add, delete);
-        });
+        //Title Screen Buttons
+        create.setOnAction(event -> launchMain(vMasterLayout, hMasterLayout, masterScene, primaryStage, title, studentPane, add, delete));
 
         load.setOnAction(event -> loadedStudents.addStudents(deserializeStudents("ObjectStorage")));
 
+        importFile.setOnAction(event -> launchReadFile(primaryStage, confirm, cancel, search));
+
+        confirm.setOnAction(event -> {
+            //Variables in lambdas have to be final which is a pain in the ass. So, you just clear everything then add students.
+            currentStudents.clearStudents();
+            currentStudents.addStudents(Objects.requireNonNull(readFile(search.getText(), false)));
+            launchMain(vMasterLayout, hMasterLayout, masterScene, primaryStage, title, studentPane, add, delete);
+        });
+
+        //Cancel just brings us back
+        cancel.setOnAction(event -> switchScene(titleScene, primaryStage));
+
+        //Master Screen
         save.setOnAction(event -> serializeStudents(currentStudents));
 
 
         primaryStage.show();
+    }
+
+    //Once each scene is properly loaded you only need to switch between them.
+    public void switchScene(Scene scene, Stage stage) {
+        stage.setScene(scene);
     }
 
     public void launchTitle(VBox vBox, HBox hBox, Scene scene, Stage stage, Text title, Button... buttons) {
@@ -378,11 +413,46 @@ public class StudentWindow extends Application {
         stage.setScene(scene);
     }
 
-    public void launchReadFile(Stage stage) {
+    public void launchReadFile(Stage stage, Button confirm, Button cancel, TextField field) {
         VBox vbox = new VBox();
-        TextField textField = new TextField("Choose File Path.");
-        Button confirm, cancel;
+        HBox buttonBox = new HBox();
+        Scale scale = new Scale(1, 1);
+        Text error = new Text("Please enter a valid file name.");
 
+        scale.setX(scale.getX() * 20);
+        scale.setY(scale.getY() * 20);
+
+        field.setMaxHeight(scale.getX() / 2);
+        field.setOnAction(event -> {
+            if (readFile(field.getText(), true) == null) {
+                error.setStrokeWidth(1);
+                error.setStroke(Color.RED);
+                error.setScaleX(scale.getX() / 10);
+                error.setScaleY(scale.getY() / 10);
+            }
+            //Makes it transparent
+            else {
+                error.setStroke(Color.WHITE);
+                error.setScaleX(0);
+                error.setScaleY(0);
+            }
+        });
+
+        confirm.setStyle("-fx-background-color: #76D2FF");
+        cancel.setStyle("-fx-background-color: #FFCD76");
+
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setSpacing(10);
+        vbox.setLayoutY(vbox.getLayoutY() - scale.getY() * 2);
+
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setSpacing(40);
+
+        buttonBox.getChildren().addAll(cancel, confirm);
+        vbox.getChildren().addAll(error, field, buttonBox);
+
+        Scene scene = new Scene(vbox, 400, 400);
+        stage.setScene(scene);
     }
 
     public ImageView getImage(String fileName) {
@@ -390,14 +460,15 @@ public class StudentWindow extends Application {
         FileInputStream input;
         ImageView imageView = null;
         try {
-            input = new FileInputStream(fileName + ".png");
+            input = new FileInputStream("src/main/resources/" + fileName + ".png");
             Image image = new Image(input);
             imageView = new ImageView(image);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-
+        imageView.setFitHeight(50);
+        imageView.setFitWidth(50);
         return imageView;
     }
 }

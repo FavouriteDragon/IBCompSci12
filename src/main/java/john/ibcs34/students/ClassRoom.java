@@ -34,7 +34,7 @@ public class ClassRoom implements Serializable {
 
 
     public void clearStudents() {
-        this.students = (Student[]) StudentWindow.capArraySize(0, students);
+        this.students = StudentWindow.capArraySize(0, students);
     }
 
     public void removeStudents(Student... students) {
