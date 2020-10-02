@@ -201,6 +201,20 @@ public class StudentWindow extends Application {
         return newArray;
     }
 
+    //While arrays are technically mutable and this could be a void method, that just makes everything more confusing. Treat it like it's immutable
+    //for the purpose of returning. Although in order to return an object you have to treat it like it's mutable. It's whack.
+    public static Student[] capArraySize(int size, Student[] students) {
+        Student[] newArray = new Student[size];
+        int i = 0;
+
+        while (i < size) {
+            newArray[i] = students[i];
+            i++;
+        }
+
+        return newArray;
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Student Lab");

@@ -6,9 +6,9 @@ public class Student implements Serializable {
 
     private String firstName;
     private String lastName;
-    private String gender;
-    private int year;
-    private int id;
+    private final String gender;
+    private final int year;
+    private final int id;
 
     public Student() {
         //Empty constructor. Make sure to fix any Student object that uses this.
@@ -56,5 +56,18 @@ public class Student implements Serializable {
         return getID() + " " + getYear() +
                 " " + getLastName() + " " + getFirstName() +
                 " " + getGender();
+    }
+
+    //Legitimately whomst the truck
+    @Override
+    public boolean equals(Object obj) {
+        boolean equals = false;
+        if (obj instanceof Student) {
+            Student student = (Student) obj;
+            if (getYear() == student.getYear() && getID() == student.getID()
+                    && getGender().equals(student.getGender()) && getFullName().equals(student.getFullName()))
+                equals = true;
+        }
+        return super.equals(obj) || equals;
     }
 }

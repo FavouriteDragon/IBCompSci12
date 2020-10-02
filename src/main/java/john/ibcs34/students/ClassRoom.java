@@ -2,6 +2,7 @@ package main.java.john.ibcs34.students;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -37,7 +38,8 @@ public class ClassRoom implements Serializable {
     }
 
     public void removeStudents(Student... students) {
-        List<Student> studentList = Arrays.asList(this.students);
+        LinkedList<Student> studentList = new LinkedList<>(Arrays.asList(this.students));
+
         for (Student value : this.students) {
             for (Student student : students) {
                 if (value.equals(student)) {
@@ -45,7 +47,14 @@ public class ClassRoom implements Serializable {
                 }
             }
         }
-        this.students = (Student[]) studentList.toArray();
+
+        int i = 0;
+        for (Student student : studentList) {
+            this.students[i] = student;
+            i++;
+        }
+        this.students = StudentWindow.capArraySize(studentList.size(), this.students);
+
 
     }
 
