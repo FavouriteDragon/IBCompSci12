@@ -29,13 +29,15 @@ public class StudentWindow extends Application {
                 new Student("James", "Atkins", "Male", 12, 759516),
         };
         ClassRoom classRoom = new ClassRoom(studentArray);
+        classRoom.removeStudents(new Student("James", "Atkins", "Male", 12, 759516));
         //Just me testing
         //students = readFile("StudentTest.txt");
         //serializeStudents(students);
         //Make sure the read in is the same location as the write out!
         //students = deserializeStudents(new File("ObjectStorage").getPath());
         writeTextFile(classRoom, "StudentTest");
-        launch(args);
+        System.out.println("Hm");
+        // launch(args);
     }
 
 
@@ -119,6 +121,7 @@ public class StudentWindow extends Application {
         try {
             //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
+            //First clear the file.
             try (FileWriter fileWriter = new FileWriter(file)) {
                 fileWriter.write(classRoom.toString());
                 fileWriter.flush();
@@ -222,7 +225,7 @@ public class StudentWindow extends Application {
         Scene titleScene, masterScene, studentScene;
         Pane masterPane = new Pane();
         ScrollPane studentPane = new ScrollPane();
-        ClassRoom currentStudents = new ClassRoom(), loadedStudents;
+        ClassRoom currentStudents = new ClassRoom(), loadedStudents = new ClassRoom();
 
         /* Title Screen */
         vTitleLayout = new VBox();
@@ -252,6 +255,8 @@ public class StudentWindow extends Application {
         create.setOnAction(event -> {
             launchMain(vMasterLayout, hMasterLayout, masterScene, primaryStage, title, studentPane, add, delete);
         });
+
+        load.setOnAction(event -> loadedStudents.addStudents(deserializeStudents("ObjectStorage")));
 
         save.setOnAction(event -> serializeStudents(currentStudents));
 

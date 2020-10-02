@@ -1,6 +1,9 @@
 package main.java.john.ibcs34.students;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
 
 public class ClassRoom implements Serializable {
 
@@ -24,14 +27,25 @@ public class ClassRoom implements Serializable {
         this.students = tempStudents;
     }
 
-    public void removeStudents(Student... students) {
-        int i = 0;
-        for (Student student : students) {
-            if (this.students[i] == student) {
+    public void addStudents(ClassRoom room) {
+        this.addStudents(room.getStudents());
+    }
 
+
+    public void clearStudents() {
+        this.students = (Student[]) StudentWindow.capArraySize(0, students);
+    }
+
+    public void removeStudents(Student... students) {
+        List<Student> studentList = Arrays.asList(this.students);
+        for (Student value : this.students) {
+            for (Student student : students) {
+                if (value.equals(student)) {
+                    studentList.remove(student);
+                }
             }
-            i++;
         }
+        this.students = (Student[]) studentList.toArray();
 
     }
 
