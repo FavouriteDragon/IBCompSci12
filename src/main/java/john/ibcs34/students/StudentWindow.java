@@ -1,9 +1,13 @@
 package main.java.john.ibcs34.students;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -20,10 +24,12 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.TimerTask;
+import java.util.jar.JarEntry;
 
 public class StudentWindow extends Application {
 
@@ -80,47 +86,36 @@ public class StudentWindow extends Application {
         }
     }
 
-    public static ClassRoom deserializeStudents(String filename, boolean check) {
+    public static ClassRoom deserializeStudents(String filename) {
 
         ClassRoom classRoom = null;
 
         FileInputStream fileStream = null;
         ObjectInputStream objectStream = null;
 
-        if (check) {
-            try {
-                fileStream = new FileInputStream(filename);
-                objectStream = new ObjectInputStream(fileStream);
-                classRoom = (ClassRoom) objectStream.readObject();
+        try {
+            fileStream = new FileInputStream(filename);
+            objectStream = new ObjectInputStream(fileStream);
+            classRoom = (ClassRoom) objectStream.readObject();
 
-            } catch (Exception ex) {
-                return null;
-            }
-        } else {
-            try {
-                fileStream = new FileInputStream(filename);
-                objectStream = new ObjectInputStream(fileStream);
-                classRoom = (ClassRoom) objectStream.readObject();
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            } finally {
-                if (fileStream != null) {
-                    try {
-                        fileStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (fileStream != null) {
+                try {
+                    fileStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                if (objectStream != null) {
-                    try {
-                        objectStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
             }
+            if (objectStream != null) {
+                try {
+                    objectStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
 
         return classRoom;
@@ -147,35 +142,25 @@ public class StudentWindow extends Application {
 
     /**
      * @param fileName Name of the file. Include the extension, and the path if necesssary.
-     * @param check    Whether you're checking to see if there's a valid file. Useful for users.
-     * @return
      */
-    public static ClassRoom readFile(String fileName, boolean check) {
+    public static ClassRoom readFile(String fileName) {
         String line;
 
-        if (check) {
-            try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            } catch (IOException exc) {
-                return null;
+        Student[] students = new Student[readFileLength(fileName)];
+        int i = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            while ((line = br.readLine()) != null) {
+                //Thanks, I hate it
+                students[i] = parseStudentFromLine(line);
+                i++;
             }
-        } else {
 
-            Student[] students = new Student[readFileLength(fileName)];
-            int i = 0;
-            try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-                while ((line = br.readLine()) != null) {
-                    //Thanks, I hate it
-                    students[i] = parseStudentFromLine(line);
-                    i++;
-                }
-
-            } catch (IOException exc) {
-                System.out.println("You goofed. ");
-                exc.printStackTrace();
-            }
-            return new ClassRoom(students);
+        } catch (IOException exc) {
+            System.out.println("You goofed. ");
+            exc.printStackTrace();
         }
-        return new ClassRoom();
+        return new ClassRoom(students);
+
     }
 
     public static Student parseStudentFromLine(String line) {
@@ -241,13 +226,46 @@ public class StudentWindow extends Application {
         return newArray;
     }
 
+    public static boolean isValid(String fileName, FileType type) {
+
+        if (type.equals(FileType.IMAGE)) {
+            FileInputStream input;
+            try {
+                input = new FileInputStream("src/main/resources/" + fileName + ".png");
+            } catch (FileNotFoundException e) {
+                return false;
+            }
+        } else if (type.equals(FileType.SERIALIZABLE)) {
+            FileInputStream fileStream = null;
+            ObjectInputStream objectStream = null;
+
+            try {
+                fileStream = new FileInputStream(fileName);
+                objectStream = new ObjectInputStream(fileStream);
+                objectStream.readObject();
+
+            } catch (Exception ex) {
+                return false;
+            }
+        } else if (type.equals(FileType.OTHER)) {
+            try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            } catch (IOException exc) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Student Lab");
 
         //Edit is 3 dots, studentEdit and studentDelete are shown after clicking on the 3 dots.
-        Button  //Main Menu
-                sort, export, stats, add, delete, edit, create, importFile, load, save,
+        Button  //Student Editor
+                sort, export, stats, add, delete, edit, toTitle,
+                //Title
+                create, importFile, load, save,
                 //For Importing/Exporting students
                 confirm, cancel,
                 //Student specific
@@ -257,7 +275,7 @@ public class StudentWindow extends Application {
                 //Student specific
                 lastName, firstName, gender, year, id;
         Image searchIcon;
-        Text title, loadError;
+        Text title, loadError, saveSuccessful;
 
         VBox    //Overall layout of the title screen
                 vTitleLayout,
@@ -266,7 +284,7 @@ public class StudentWindow extends Application {
         HBox hMasterLayout, hTitleLayout, hButtonLayoutBottom;
         Scene titleScene, masterScene, studentScene;
         Pane masterPane = new Pane();
-        ScrollPane studentPane = new ScrollPane();
+        ScrollPane scrollPane;
         ClassRoom currentStudents = new ClassRoom(), loadedStudents = new ClassRoom();
         TimerTask fadeLoadError;
         Timer onUpdate, fadeError;
@@ -282,7 +300,7 @@ public class StudentWindow extends Application {
         confirm = new Button("Confirm", getImage("confirm_icon"));
         cancel = new Button("Cancel", getImage("cancel_icon"));
         search = new TextField("Enter File Path.");
-        loadError = new Text("No Progress Saved.");
+        loadError = new Text("No Saved Progress.");
 
         //Timer stuff for fading.
         fadeError = new Timer(5, action -> {
@@ -297,26 +315,29 @@ public class StudentWindow extends Application {
         });
 
 
-        //This edits the buttons? I think
+        //This edits the buttons, launches the title screen
         onUpdate.start();
         launchTitle(vTitleLayout, hTitleLayout, titleScene, primaryStage, title, create, importFile, load);
 
         /* Master Screen */
         vMasterLayout = new VBox();
         hMasterLayout = new HBox();
-        masterScene = new Scene(vMasterLayout, 400, 400);
+        scrollPane = new ScrollPane();
+        masterScene = new Scene(scrollPane, 400, 400);
 
-        add = new Button("Add Student");
-        delete = new Button("Delete Student");
+        add = new Button("Add Student", getImage("plus_icon"));
+        delete = new Button("Delete Student", getImage("minus_icon"));
         save = new Button("Save");
         export = new Button("Export");
         stats = new Button("Statistics");
+        toTitle = new Button("Main Menu");
 
         //Title Screen Buttons
-        create.setOnAction(event -> launchMain(vMasterLayout, hMasterLayout, masterScene, primaryStage, title, studentPane, add, delete));
+        create.setOnAction(event -> launchMain(vMasterLayout, hMasterLayout, masterScene, primaryStage, title, scrollPane, currentStudents,
+                add, delete, toTitle, delete, save, export, stats));
 
         load.setOnAction(event -> {
-            if (deserializeStudents("ObjectStorage", true) == null) {
+            if (!isValid("ObjectStorage", FileType.SERIALIZABLE)) {
                 loadError.setStroke(Color.RED);
                 loadError.setScaleY(2);
                 loadError.setScaleX(2);
@@ -328,7 +349,8 @@ public class StudentWindow extends Application {
                 loadError.setScaleY(0);
                 loadError.setScaleX(0);
                 loadedStudents.clearStudents();
-                loadedStudents.addStudents(deserializeStudents("ObjectStorage", false));
+                loadedStudents.addStudents(Objects.requireNonNull(deserializeStudents("ObjectStorage")));
+                launchMain(vMasterLayout, hMasterLayout, masterScene, primaryStage, title, scrollPane, loadedStudents, add, delete);
             }
             if (!vTitleLayout.getChildren().contains(loadError)) {
                 vTitleLayout.getChildren().add(loadError);
@@ -341,9 +363,14 @@ public class StudentWindow extends Application {
 
         confirm.setOnAction(event -> {
             //Variables in lambdas have to be final which is a pain in the ass. So, you just clear everything then add students.
-            currentStudents.clearStudents();
-            currentStudents.addStudents(Objects.requireNonNull(readFile(search.getText(), false)));
-            launchMain(vMasterLayout, hMasterLayout, masterScene, primaryStage, title, studentPane, add, delete);
+
+            if (isValid(search.getText(), FileType.OTHER)) {
+                currentStudents.clearStudents();
+                currentStudents.addStudents(Objects.requireNonNull(readFile(search.getText())));
+                launchMain(vMasterLayout, hMasterLayout, masterScene, primaryStage, title, scrollPane, currentStudents, add, delete);
+            } else {
+
+            }
         });
 
         //Cancel just brings us back
@@ -351,6 +378,8 @@ public class StudentWindow extends Application {
 
         //Master Screen
         save.setOnAction(event -> serializeStudents(currentStudents));
+
+        toTitle.setOnAction(event -> switchScene(titleScene, primaryStage));
 
 
         primaryStage.show();
@@ -362,112 +391,183 @@ public class StudentWindow extends Application {
             fadeError.stop();
         }
     }
+
     //Once each scene is properly loaded you only need to switch between them.
     public void switchScene(Scene scene, Stage stage) {
         stage.setScene(scene);
     }
 
     public void launchTitle(VBox vBox, HBox hBox, Scene scene, Stage stage, Text title, Button... buttons) {
-        Scale scale = new Scale(1, 1);
-        scale.setX(scale.getX() * 20);
-        scale.setY(scale.getY() * 20);
+        if (hBox.getChildren().size() > 0 || vBox.getChildren().size() > 0)
+            switchScene(scene, stage);
+        else {
+            Scale scale = new Scale(1, 1);
+            scale.setX(scale.getX() * 20);
+            scale.setY(scale.getY() * 20);
 
-        vBox.setAlignment(Pos.CENTER);
-        hBox.setAlignment(Pos.CENTER);
+            vBox.setAlignment(Pos.CENTER);
+            hBox.setAlignment(Pos.CENTER);
 
-        title = new Text("Students");
-        title.setFont(Font.font("System", FontPosture.ITALIC, 10));
-        title.setStroke(Color.RED);
-        title.setFill(Color.WHITE);
-        title.setStrokeWidth(0.5);
-        title.setScaleX(scale.getX() / 5);
-        title.setScaleY(scale.getY() / 5);
+            title = new Text("Students");
+            title.setFont(Font.font("System", FontPosture.ITALIC, 10));
+            title.setStroke(Color.RED);
+            title.setFill(Color.WHITE);
+            title.setStrokeWidth(0.5);
+            title.setScaleX(scale.getX() / 5);
+            title.setScaleY(scale.getY() / 5);
 
-        //Formats the buttons
-        for (Button button : buttons) {
-            button.setScaleX(scale.getX() / 12.5);
-            button.setScaleY(scale.getY() / 12.5);
-            button.setStyle("-fx-background-color: #ff0000");
-            button.setTextFill(Color.WHITE);
-        }
-
-        //Essentially ensures there are two buttons per line.
-        //Grabs the array length.
-        int length = buttons.length;
-        //Gets the amount of HBox's necessary.
-        int size = Math.round(length / 2F) - 1;
-        HBox[] newLines = new HBox[size];
-        for (int i = 0; i < size; i++) {
-            newLines[i] = new HBox();
-            newLines[i].setAlignment(Pos.CENTER);
-            newLines[i].setSpacing(scale.getX() * 4);
-            //Two buttons per line.
-            Button[] newLineButtons = new Button[size - i];
-            for (int j = 0; j < size - i + 1; j++) {
-                int index = (i + 1) * 2 + j - 1;
-                //Safety check
-                if (index < length)
-                    newLineButtons[i] = buttons[(i + 1) * 2 + j - 1];
+            //Formats the buttons
+            for (Button button : buttons) {
+                button.setScaleX(scale.getX() / 12.5);
+                button.setScaleY(scale.getY() / 12.5);
+                button.setStyle("-fx-background-color: #ff0000");
+                button.setTextFill(Color.WHITE);
             }
 
-            newLines[i].getChildren().addAll(newLineButtons);
+            //Essentially ensures there are two buttons per line.
+            //Grabs the array length.
+            int length = buttons.length;
+            //Gets the amount of HBox's necessary.
+            int size = Math.round(length / 2F) - 1;
+            HBox[] newLines = new HBox[size];
+            for (int i = 0; i < size; i++) {
+                newLines[i] = new HBox();
+                newLines[i].setAlignment(Pos.CENTER);
+                newLines[i].setSpacing(scale.getX() * 4);
+                //Two buttons per line.
+                Button[] newLineButtons = new Button[size - i];
+                for (int j = 0; j < size - i + 1; j++) {
+                    int index = (i + 1) * 2 + j - 1;
+                    //Safety check
+                    if (index < length)
+                        newLineButtons[i] = buttons[(i + 1) * 2 + j - 1];
+                }
+
+                newLines[i].getChildren().addAll(newLineButtons);
+            }
+
+            vBox.setLayoutY(-125 + 35 * newLines.length + scale.getY());
+            vBox.setSpacing(scale.getY() * 2);
+            hBox.setSpacing(scale.getX() * 4);
+
+            hBox.getChildren().addAll(buttons[0], buttons[1]);
+            vBox.getChildren().addAll(title, hBox);
+            vBox.getChildren().addAll(newLines);
+
+            Text author = new Text("Made by John, the slickest UI dev you've ever seen.");
+            author.setTextAlignment(TextAlignment.CENTER);
+            author.setStrokeWidth(2);
+
+            VBox pos = new VBox();
+            pos.setAlignment(Pos.BASELINE_CENTER);
+            pos.getChildren().addAll(author);
+
+            vBox.getChildren().addAll(pos);
+
+            stage.setScene(scene);
         }
-
-        vBox.setLayoutY(-125 + 35 * newLines.length + scale.getY());
-        vBox.setSpacing(scale.getY() * 2);
-        hBox.setSpacing(scale.getX() * 4);
-
-        hBox.getChildren().addAll(buttons[0], buttons[1]);
-        vBox.getChildren().addAll(title, hBox);
-        vBox.getChildren().addAll(newLines);
-
-        Text author = new Text("Made by John, the slickest UI dev you've ever seen.");
-        author.setTextAlignment(TextAlignment.CENTER);
-        author.setStrokeWidth(2);
-
-        VBox pos = new VBox();
-        pos.setAlignment(Pos.BASELINE_CENTER);
-        pos.getChildren().addAll(author);
-
-        vBox.getChildren().addAll(pos);
-
-        stage.setScene(scene);
     }
 
-    public void launchMain(VBox vBox, HBox hBox, Scene scene, Stage stage, Text title, ScrollPane pane, Button... buttons) {
-        Scale scale = new Scale(1, 1);
-        scale.setX(scale.getX() * 20);
-        scale.setY(scale.getY() * 20);
+    public void launchMain(VBox vBox, HBox hBox, Scene scene, Stage stage, Text title, ScrollPane scrollPane, ClassRoom classRoom, Button... buttons) {
+        if (hBox.getChildren().size() > 0 || vBox.getChildren().size() > 0)
+            switchScene(scene, stage);
 
-        vBox.setAlignment(Pos.CENTER);
-        hBox.setAlignment(Pos.CENTER);
+        else {
+            //TODO: ListViews for student shiz
+            Scale scale = new Scale(1, 1);
+            scale.setX(scale.getX() * 20);
+            scale.setY(scale.getY() * 20);
 
-        title = new Text("Students");
-        title.setFont(Font.font("System", FontPosture.ITALIC, 10));
-        title.setStroke(Color.RED);
-        title.setFill(Color.WHITE);
-        title.setStrokeWidth(0.5);
-        title.setScaleX(scale.getX() / 5);
-        title.setScaleY(scale.getY() / 5);
+            //Overall scroll pane, then a second one.
+            ScrollPane studentPane = new ScrollPane();
 
-        //Add and delete at top
-        buttons[0] = new Button("Add Student");
-        buttons[1] = new Button("Delete Student");
-        for (Button button : buttons) {
-            button.setScaleX(scale.getX() / 12.5);
-            button.setScaleY(scale.getY() / 12.5);
-            button.setStyle("-fx-background-color: #ff0000");
-            button.setTextFill(Color.WHITE);
+            HBox topBox = new HBox();
+            topBox.setAlignment(Pos.TOP_CENTER);
+            topBox.setSpacing(scale.getX() * 5);
+            topBox.setLayoutX(scale.getX() * 5);
+
+            //Hboxes manage all of the buttons in the line, whereas the vbox manages all of the lines in the ScrollPane
+            HBox[] studentLines = new HBox[classRoom.getStudents().length];
+            VBox students = new VBox();
+
+            vBox.setAlignment(Pos.CENTER);
+            vBox.setAlignment(Pos.CENTER);
+            hBox.setAlignment(Pos.CENTER);
+
+            title.setFont(Font.font("System", FontPosture.ITALIC, 10));
+            title.setStroke(Color.RED);
+            title.setFill(Color.WHITE);
+            title.setStrokeWidth(0.5);
+            title.setScaleX(scale.getX() / 5);
+            title.setScaleY(scale.getY() / 5);
+
+            //Add and delete at top
+            int l = 0;
+            for (Button button : buttons) {
+                button.setScaleX(scale.getX() / 12.5);
+                button.setScaleY(scale.getY() / 12.5);
+                if (l < 2) {
+                    //The add button is used first.
+                    button.setScaleX(scale.getX() / 30);
+                    button.setScaleY(scale.getY() / 30);
+                    if (l == 0) {
+                        button.setStyle("-fx-background-color: #76D2FF");
+                    }
+                    else {
+                        button.setStyle("-fx-background-color: #FFCD76");
+                    }
+                }
+                else {
+                    button.setStyle("-fx-background-color: #ff0000");
+                }
+                button.setTextFill(Color.WHITE);
+                l++;
+            }
+
+            //Essentially ensures there are two buttons per line.
+            //Grabs the array length.
+            int length = buttons.length;
+            //Gets the amount of HBox's necessary. Skips the first 4 buttons.
+            int size = Math.round(length / 2F) - 2;
+            HBox[] newLines = new HBox[size];
+            for (int i = 0; i < size; i++) {
+                newLines[i] = new HBox();
+                newLines[i].setAlignment(Pos.CENTER);
+                newLines[i].setSpacing(scale.getX() * 4);
+                //Two buttons per line.
+                Button[] newLineButtons = new Button[size - i];
+                for (int j = 0; j < size - i + 1; j++) {
+                    int index = (i + 1) * 2 + j - 1;
+                    //Safety check
+                    if (index < length)
+                        newLineButtons[i] = buttons[(i + 1) * 2 + j - 1];
+                }
+
+                newLines[i].getChildren().addAll(newLineButtons);
+            }
+
+            students.setSpacing(scale.getY() / 4);
+            students.getChildren().addAll(studentLines);
+
+            studentPane.setContent(students);
+            studentPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            studentPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+            vBox.setSpacing(scale.getY() * 2);
+            hBox.setSpacing(scale.getX() * 4);
+
+            topBox.getChildren().addAll(buttons[1], buttons[0]);
+
+            vBox.getChildren().addAll(topBox, title, studentPane, hBox);
+            vBox.getChildren().addAll(newLines);
+            vBox.setLayoutY(-150 + scale.getY() * (vBox.getChildren().size() + 1));
+
+            scrollPane.setContent(vBox);
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+            stage.setScene(scene);
         }
-
-        vBox.setLayoutY(-150 + scale.getY());
-        vBox.setSpacing(scale.getY() * 2);
-        hBox.setSpacing(scale.getX() * 4);
-
-        hBox.getChildren().addAll(buttons);
-        vBox.getChildren().addAll(title, hBox);
-
-        stage.setScene(scene);
     }
 
     public void launchReadFile(Stage stage, Button confirm, Button cancel, TextField field) {
@@ -481,7 +581,7 @@ public class StudentWindow extends Application {
 
         field.setMaxHeight(scale.getX() / 2);
         field.setOnAction(event -> {
-            if (readFile(field.getText(), true) == null) {
+            if (!isValid(field.getText(), FileType.OTHER)) {
                 error.setStrokeWidth(1);
                 error.setStroke(Color.RED);
                 error.setScaleX(scale.getX() / 10);
@@ -527,5 +627,11 @@ public class StudentWindow extends Application {
         imageView.setFitHeight(50);
         imageView.setFitWidth(50);
         return imageView;
+    }
+
+    public enum FileType {
+        IMAGE,
+        SERIALIZABLE,
+        OTHER
     }
 }
