@@ -103,8 +103,8 @@ public class ClassRoom implements Serializable {
         return numbers;
     }
 
-    public int[] getIDs() {
-        int[] numbers = new int[students.length];
+    public long[] getIDs() {
+        long[] numbers = new long[students.length];
         int i = 0;
         for (Student student : students) {
             numbers[i] = students[i].getID();
