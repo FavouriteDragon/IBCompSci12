@@ -54,8 +54,6 @@ public class ClassRoom implements Serializable {
             i++;
         }
         this.students = StudentWindow.capArraySize(studentList.size(), this.students);
-
-
     }
 
     public String[] getFirstNames() {

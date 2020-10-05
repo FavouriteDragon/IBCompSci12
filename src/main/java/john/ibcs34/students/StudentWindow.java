@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 
 import javax.swing.*;
 import java.io.*;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -218,6 +220,19 @@ public class StudentWindow extends Application {
         return newArray;
     }
 
+    public static Pane[] capArraySize(int size, Pane[] panes) {
+        Pane[] newArray = new Pane[size];
+        int i = 0;
+
+        while (i < size) {
+            newArray[i] = panes[i];
+            i++;
+        }
+
+        return newArray;
+    }
+
+
     public static boolean isValid(String fileName, FileType type) {
 
         if (type.equals(FileType.IMAGE)) {
@@ -277,7 +292,7 @@ public class StudentWindow extends Application {
                 //Overall layout of the functional screen
                 vMasterLayout,
                 //Layout of the student editor
-                vStudentLayout, vStudentEditLayout;
+                vStudentLayout, vStudentEditLayout, vStudents;
         HBox
                 hTitleLayout,
                 hMasterLayout;
@@ -334,6 +349,7 @@ public class StudentWindow extends Application {
         /* Student Screen */
         vStudentLayout = new VBox();
         vStudentEditLayout = new VBox();
+        vStudents = new VBox();
         studentScene = new Scene(vStudentLayout, 400, 400);
         studentEditScene = new Scene(vStudentEditLayout, 400, 400);
 
@@ -365,11 +381,12 @@ public class StudentWindow extends Application {
         updateStudents = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                launchMain(vMasterLayout, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
-                        primaryStage, masterTitle, studentPane, currentStudents, this, add, delete, export, stats, save, toTitle);
+                launchMain(vMasterLayout, vStudents, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
+                        primaryStage, masterTitle, studentPane, currentStudents, this, false, add, delete, export, stats, save, toTitle);
                 this.stop();
             }
         };
+
         onUpdate = new Timer(2, action -> {
             cleanTimers(fadeError, loadError);
             cleanTimers(fadeSave, saveSuccessful);
@@ -381,8 +398,8 @@ public class StudentWindow extends Application {
         onUpdate.start();
 
         //Title Screen Buttons
-        create.setOnAction(event -> launchMain(vMasterLayout, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
-                primaryStage, masterTitle, studentPane, currentStudents, updateStudents, add, delete, export, stats, save, toTitle));
+        create.setOnAction(event -> launchMain(vMasterLayout, vStudents, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
+                primaryStage, masterTitle, studentPane, currentStudents, updateStudents, false, add, delete, export, stats, save, toTitle));
 
         load.setOnAction(event -> {
             if (!isValid("ObjectStorage", FileType.SERIALIZABLE)) {
@@ -398,8 +415,8 @@ public class StudentWindow extends Application {
                 loadError.setScaleX(0);
                 loadedStudents.clearStudents();
                 loadedStudents.addStudents(Objects.requireNonNull(deserializeStudents("ObjectStorage")));
-                launchMain(vMasterLayout, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
-                        primaryStage, masterTitle, studentPane, currentStudents, updateStudents, add, delete, export, stats, save, toTitle);
+                launchMain(vMasterLayout, vStudentEditLayout, vStudents, hMasterLayout, masterScene, studentEditScene,
+                        primaryStage, masterTitle, studentPane, currentStudents, updateStudents, false, add, delete, export, stats, save, toTitle);
             }
             if (!vTitleLayout.getChildren().contains(loadError)) {
                 vTitleLayout.getChildren().add(loadError);
@@ -416,8 +433,8 @@ public class StudentWindow extends Application {
             if (isValid(search.getText(), FileType.OTHER)) {
                 currentStudents.clearStudents();
                 currentStudents.addStudents(Objects.requireNonNull(readFile(search.getText())));
-                launchMain(vMasterLayout, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
-                        primaryStage, masterTitle, studentPane, currentStudents, updateStudents, add, delete, export, stats, save, toTitle);
+                launchMain(vMasterLayout, vStudents, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
+                        primaryStage, masterTitle, studentPane, currentStudents, updateStudents, false, add, delete, export, stats, save, toTitle);
             }
         });
 
@@ -466,6 +483,10 @@ public class StudentWindow extends Application {
 
         add.setOnAction(event -> {
             createStudent(studentScene, masterScene, vStudentLayout, primaryStage, currentStudents, updateStudents);
+        });
+        delete.setOnAction(event -> {
+            launchMain(vMasterLayout, vStudents, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
+                    primaryStage, masterTitle, studentPane, currentStudents, updateStudents, true, add, delete, export, stats, save, toTitle);
         });
 
 
@@ -567,8 +588,8 @@ public class StudentWindow extends Application {
         }
     }
 
-    public void launchMain(VBox vBox, VBox studentBox, HBox hBox, Scene scene, Scene studentScene, Stage stage, Text title, ScrollPane scrollPane, ClassRoom classRoom,
-                           AnimationTimer timer, Button... buttons) {
+    public void launchMain(VBox vBox, VBox students, VBox studentBox, HBox hBox, Scene scene, Scene studentScene, Stage stage, Text title, ScrollPane scrollPane, ClassRoom classRoom,
+                           AnimationTimer timer, boolean delete, Button... buttons) {
         Scale scale = new Scale(1, 1);
 
         scale.setX(scale.getX() * 20);
@@ -584,7 +605,6 @@ public class StudentWindow extends Application {
 
 
         Pane[] studentPanes = new Pane[classRoom.getStudents().length];
-        VBox students = new VBox();
 
         vBox.setAlignment(Pos.CENTER);
         vBox.setAlignment(Pos.CENTER);
@@ -649,7 +669,7 @@ public class StudentWindow extends Application {
 
         //ClassRoom room, ScrollPane studentPane, VBox controller, Scene scene, Scene masterScene, Pane[] studentPanes,
         //                                    Stage stage, AnimationTimer timer
-        displayStudentPanes(classRoom, studentPane, students, studentBox, studentScene, scene, studentPanes, stage, timer);
+        displayStudentPanes(classRoom, studentPane, students, studentBox, studentScene, scene, studentPanes, stage, timer, delete);
 
         students.setSpacing(scale.getY() / 4);
         students.setAlignment(Pos.TOP_CENTER);
@@ -680,12 +700,15 @@ public class StudentWindow extends Application {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
+        if (delete)
+            delete = false;
+
         if (!stage.getScene().equals(scene))
             stage.setScene(scene);
     }
 
     public void displayStudentPanes(ClassRoom room, ScrollPane studentPane, VBox controller, VBox studentEditor, Scene scene, Scene masterScene, Pane[] studentPanes,
-                                    Stage stage, AnimationTimer timer) {
+                                    Stage stage, AnimationTimer timer, boolean delete) {
         int i = 0;
         Button[] editButtons = new Button[room.getStudents().length];
         Text[] names = new Text[room.getStudents().length];
@@ -695,11 +718,13 @@ public class StudentWindow extends Application {
 
         for (Student student : room.getStudents()) {
             studentPanes[i] = new Pane();
+            //This is for action events
+            Pane pane = studentPanes[i];
             names[i] = new Text(student.getFullName());
             grades[i] = new Text(String.valueOf(student.getYear()));
             genders[i] = new Text(student.getGender());
             ids[i] = new Text(String.valueOf(student.getID()));
-            editButtons[i] = new Button("Edit");
+
 
             names[i].setLayoutX(15);
             names[i].setLayoutY(studentPanes[i].getLayoutY() + 20);
@@ -714,14 +739,26 @@ public class StudentWindow extends Application {
             genders[i].setLayoutY(studentPanes[i].getLayoutY() + 20);
 
 
-            editButtons[i].setStyle("-fx-background-color: #1BCCE4");
+            if (delete) {
+                editButtons[i] = new Button("Delete");
+                editButtons[i].setStyle("-fx-background-color: #FF0000");
+                editButtons[i].setOnAction(event -> {
+                    deleteStudent(room, student, studentPanes, pane);
+                    updateScene(timer);
+                });
+
+            } else {
+                editButtons[i] = new Button("Edit");
+                editButtons[i].setStyle("-fx-background-color: #1BCCE4");
+                editButtons[i].setOnAction(event -> editStudent(scene, masterScene, studentEditor, stage, student, timer));
+
+            }
             editButtons[i].setTextFill(Color.WHITE);
             editButtons[i].setAlignment(Pos.CENTER_RIGHT);
             editButtons[i].setLayoutX(345);
             editButtons[i].setLayoutY(studentPanes[i].getLayoutY() + 5);
 
-            //Scene scene, Scene masterScene, VBox controller, Stage stage, Student student, AnimationTimer masterUpdate
-            editButtons[i].setOnAction(event -> editStudent(scene, masterScene, controller, stage, student, timer));
+            studentPanes[i].getChildren().clear();
             studentPanes[i].getChildren().addAll(names[i], grades[i], genders[i], ids[i], editButtons[i]);
 
             //What the heck is this, java???? This is cursed
@@ -729,6 +766,7 @@ public class StudentWindow extends Application {
                     new CornerRadii(5), BorderWidths.DEFAULT)));
             i++;
         }
+        controller.getChildren().clear();
         controller.setLayoutY(-400);
         controller.getChildren().addAll(studentPanes);
         studentPane.setContent(controller);
@@ -848,6 +886,8 @@ public class StudentWindow extends Application {
         int i = 0;
         for (TextField field : studentFields) {
             //Resets the text in between creating students
+            if (studentFields[i] != null)
+                studentFields[i].clear();
             switch (i) {
                 case 0:
                     studentFields[i] = new TextField("First Name");
@@ -865,8 +905,6 @@ public class StudentWindow extends Application {
                     studentFields[i] = new TextField("Student ID");
                     break;
             }
-            if (field != null)
-                field.clear();
             i++;
         }
 
@@ -910,25 +948,25 @@ public class StudentWindow extends Application {
         int i = 0;
         for (TextField field : studentFields) {
             //Resets the text in between creating students
+            if (studentFields[i] != null)
+                studentFields[i].clear();
             switch (i) {
                 case 0:
-                    studentFields[i] = new TextField("First Name");
+                    studentFields[i] = new TextField(student.getFirstName());
                     break;
                 case 1:
-                    studentFields[i] = new TextField("Last Name");
+                    studentFields[i] = new TextField(student.getLastName());
                     break;
                 case 2:
-                    studentFields[i] = new TextField("Gender");
+                    studentFields[i] = new TextField(student.getGender());
                     break;
                 case 3:
-                    studentFields[i] = new TextField("Grade");
+                    studentFields[i] = new TextField(String.valueOf(student.getYear()));
                     break;
                 case 4:
-                    studentFields[i] = new TextField("Student ID");
+                    studentFields[i] = new TextField(String.valueOf(student.getID()));
                     break;
             }
-            if (field != null)
-                field.clear();
             i++;
         }
 
@@ -963,6 +1001,93 @@ public class StudentWindow extends Application {
         stage.setScene(scene);
     }
 
+    public void deleteStudent(ClassRoom classRoom, Student student, Pane[] studentPanes, Pane pane) {
+
+        classRoom.removeStudents(student);
+
+        LinkedList<Pane> paneList = new LinkedList<>(Arrays.asList(studentPanes));
+
+        for (Pane allPanes : studentPanes) {
+            paneList.removeIf(toRemove -> allPanes.equals(toRemove) && toRemove.equals(pane));
+        }
+
+        int i = 0;
+        for (Pane toAdd : paneList) {
+            studentPanes[i] = toAdd;
+            i++;
+        }
+        studentPanes = StudentWindow.capArraySize(paneList.size(), studentPanes);
+
+    }
+
+    public void displayStatistics(Scene statsScene, ScrollPane displayPane, VBox display, Stage stage, ClassRoom room, AnimationTimer timer) {
+        Button exit;
+        Text boy, girl, grade9, grade10, grade11, grade12, lastName, studentNumber;
+        Text[] lastNameLetters = new Text[26];
+
+        int boys = 0, girls = 0, year9 = 0, year10 = 0, year11 = 0, year12 = 0;
+        Student[] students = room.getStudents();
+        int[] lastNames = new int[26];
+
+
+        for (int j = 0; j < room.getStudents().length; j++) {
+            if (students[j] != null) {
+                Student student = students[j];
+                if (student.getGender().equalsIgnoreCase("male"))
+                    boys++;
+                else girls++;
+                int charCode = student.getLastName().charAt(0);
+                charCode -= 65;
+                lastNames[charCode]++;
+
+                switch (student.getYear()) {
+                    case 9:
+                        year9++;
+                        break;
+                    case 10:
+                        year10++;
+                        break;
+                    case 11:
+                        year11++;
+                        break;
+                    case 12:
+                        year12++;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        studentNumber = new Text("Total Number of Students: " + students.length);
+        boy = new Text("Boys: " + boys);
+        girl = new Text("Girls: " + girls);
+        grade9 = new Text("9th Graders: " + year9);
+        grade10 = new Text("10th Graders: " + year10);
+        grade11 = new Text("11th Graders: " + year11);
+        grade12 = new Text("12th Graders: " + year12);
+        lastName = new Text("Last names beginning with: ");
+
+        display.getChildren().addAll(studentNumber, boy, girl, grade9, grade10, grade11, grade12, lastName);
+        for (int j = 0; j < 26; j++) {
+            lastNameLetters[j] = new Text((char) (j + 65) + " : " + lastNames[j]);
+            display.getChildren().add(lastNameLetters[j]);
+        }
+
+        exit = new Button("Exit");
+        exit.setStyle("-fx-background-color: #FF0000");
+        exit.setOnAction(event -> updateScene(timer));
+
+        display.setSpacing(40);
+
+        displayPane.setContent(display);
+        displayPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        displayPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+
+        stage.setScene(statsScene);
+    }
 
     public enum FileType {
         IMAGE,
