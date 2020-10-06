@@ -829,7 +829,7 @@ public class StudentWindow extends Application {
 
                         else if (String.valueOf(student.getID()).equals(searchField.getText()))
                             studentPanes[i].setBackground(toSet);
-                       
+
                         else studentPanes[i].setBackground(Background.EMPTY);
                     }
                     else studentPanes[i].setBackground(Background.EMPTY);
@@ -935,7 +935,7 @@ public class StudentWindow extends Application {
         FileInputStream input;
         ImageView imageView = null;
         try {
-            input = new FileInputStream("src/main/resources/" + fileName + ".png");
+            input = new FileInputStream("resources/" + fileName + ".png");
             Image image = new Image(input);
             imageView = new ImageView(image);
         } catch (FileNotFoundException e) {
