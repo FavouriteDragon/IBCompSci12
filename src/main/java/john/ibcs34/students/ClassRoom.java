@@ -1,5 +1,6 @@
 package main.java.john.ibcs34.students;
 
+import javax.swing.text.Style;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -53,6 +54,18 @@ public class ClassRoom implements Serializable {
             i++;
         }
         this.students = StudentWindow.capArraySize(studentList.size(), this.students);
+    }
+
+    public void moveStudentsToFront(Student... students) {
+        Student[] newStudents = new Student[getStudents().length];
+        this.removeStudents(students);
+        System.arraycopy(students, 0, newStudents, 0, students.length);
+
+        for (int i = students.length; i < newStudents.length; i++)
+            newStudents[i] = getStudents()[i - students.length];
+
+        this.students = newStudents;
+
     }
 
     public void sortByLastName() {
