@@ -3,7 +3,6 @@ package main.java.john.ibcs34.students;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 
 
 public class ClassRoom implements Serializable {
@@ -54,6 +53,70 @@ public class ClassRoom implements Serializable {
             i++;
         }
         this.students = StudentWindow.capArraySize(studentList.size(), this.students);
+    }
+
+    public void sortByLastName() {
+        int size = getStudents().length;
+        for (int j = 0; j < size; j++) {
+            for (int h = size - 1; h > j; h--) {
+                int curChar = students[h].getLastName().charAt(0);
+                int prevChar = students[h - 1].getLastName().charAt(0);
+                if (prevChar > curChar) {
+                    Student prevStudent = students[h - 1];
+                    students[h - 1] = students[h];
+                    students[h] = prevStudent;
+                }
+            }
+        }
+    }
+
+    public Student[] getSortByLastName() {
+        int size = getStudents().length;
+        //This basically ensures that this class' students aren't being edited, allowing for comparisons
+        Student[] tempStudents = getStudents().clone();
+        for (int j = 0; j < size; j++) {
+            for (int h = size - 1; h > j; h--) {
+                int curChar = tempStudents[h].getLastName().charAt(0);
+                int prevChar = tempStudents[h - 1].getLastName().charAt(0);
+                if (prevChar > curChar) {
+                    Student prevStudent = tempStudents[h - 1];
+                    tempStudents[h - 1] = tempStudents[h];
+                    tempStudents[h] = prevStudent;
+                }
+            }
+        }
+        return tempStudents;
+    }
+
+    public void sortByID() {
+        int size = getStudents().length;
+        for (int j = 0; j < size; j++) {
+            for (int h = size - 1; h > j; h--) {
+                long currentId = students[h].getID();
+                long prevID = students[h - 1].getID();
+                if (prevID > currentId) {
+                    Student prevStudent = students[h - 1];
+                    students[h - 1] = students[h];
+                    students[h] = prevStudent;
+                }
+            }
+        }
+    }
+
+    public ClassRoom getSortByID() {
+        int size = getStudents().length;
+        for (int j = 0; j < size; j++) {
+            for (int h = size - 1; h > j; h--) {
+                long currentId = students[h].getID();
+                long prevID = students[h - 1].getID();
+                if (prevID > currentId) {
+                    Student prevStudent = students[h - 1];
+                    students[h - 1] = students[h];
+                    students[h] = prevStudent;
+                }
+            }
+        }
+        return this;
     }
 
     public String[] getFirstNames() {
@@ -112,6 +175,23 @@ public class ClassRoom implements Serializable {
 
     public Student[] getStudents() {
         return this.students;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean equivalent = true;
+        if (obj instanceof ClassRoom) {
+            ClassRoom room = (ClassRoom) obj;
+            int i = 0;
+            if (room.getStudents().length != this.students.length)
+                equivalent = false;
+            for (Student student : ((ClassRoom) obj).students) {
+                if (room.students[i] != this.students[i])
+                    equivalent = false;
+                //No break statements!
+            }
+        }
+        return super.equals(obj) || equivalent;
     }
 
     @Override

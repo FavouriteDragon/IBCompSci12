@@ -2,6 +2,7 @@ package main.java.john.ibcs34.students;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -278,9 +279,7 @@ public class StudentWindow extends Application {
                 //Student specific
                 studentEdit, studentDelete;
         TextField   //General
-                search, exportField,
-                //Student specific
-                lastName, firstName, gender, year, id;
+                search, exportField;
         Image
                 searchIcon;
         Text
@@ -292,21 +291,24 @@ public class StudentWindow extends Application {
                 //Overall layout of the functional screen
                 vMasterLayout,
                 //Layout of the student editor
-                vStudentLayout, vStudentEditLayout, vStudents;
+                vStudentLayout, vStudentEditLayout, vStudents, vStatsLayout;
         HBox
                 hTitleLayout,
                 hMasterLayout;
         Scene
                 titleScene,
-                masterScene, studentScene, studentEditScene;
+                masterScene, studentScene, studentEditScene, statsScene;
         ScrollPane
-                studentPane;
+                studentPane, statsPlane;
         ClassRoom
                 currentStudents = new ClassRoom(), loadedStudents = new ClassRoom();
         Timer
                 onUpdate, fadeError, fadeSave, fadeExport;
         AnimationTimer
-                updateStudents;
+                //Used for updating the main screen
+                updateStudents,
+                //Used for updating
+                sortLastName, sortID;
 
         /* Title Screen */
         vTitleLayout = new VBox();
@@ -345,6 +347,7 @@ public class StudentWindow extends Application {
         export = new Button("Export");
         stats = new Button("Statistics");
         toTitle = new Button("Main Menu");
+        sort = new Button("Sort");
 
         /* Student Screen */
         vStudentLayout = new VBox();
@@ -352,6 +355,11 @@ public class StudentWindow extends Application {
         vStudents = new VBox();
         studentScene = new Scene(vStudentLayout, 400, 400);
         studentEditScene = new Scene(vStudentEditLayout, 400, 400);
+
+        /* Misc */
+        vStatsLayout = new VBox();
+        statsPlane = new ScrollPane();
+        statsScene = new Scene(statsPlane, 400, 400);
 
 
         //Timer stuff for fading.
@@ -382,7 +390,7 @@ public class StudentWindow extends Application {
             @Override
             public void handle(long now) {
                 launchMain(vMasterLayout, vStudents, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
-                        primaryStage, masterTitle, studentPane, currentStudents, this, false, add, delete, export, stats, save, toTitle);
+                        primaryStage, masterTitle, studentPane, currentStudents, this, false, add, delete, export, stats, save, toTitle, sort);
                 this.stop();
             }
         };
@@ -398,8 +406,12 @@ public class StudentWindow extends Application {
         onUpdate.start();
 
         //Title Screen Buttons
-        create.setOnAction(event -> launchMain(vMasterLayout, vStudents, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
-                primaryStage, masterTitle, studentPane, currentStudents, updateStudents, false, add, delete, export, stats, save, toTitle));
+        create.setOnAction(event -> {
+            currentStudents.clearStudents();
+            launchMain(vMasterLayout, vStudents, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
+                    primaryStage, masterTitle, studentPane, currentStudents, updateStudents, false, add, delete, export, stats, save, toTitle, sort);
+
+        });
 
         load.setOnAction(event -> {
             if (!isValid("ObjectStorage", FileType.SERIALIZABLE)) {
@@ -415,8 +427,10 @@ public class StudentWindow extends Application {
                 loadError.setScaleX(0);
                 loadedStudents.clearStudents();
                 loadedStudents.addStudents(Objects.requireNonNull(deserializeStudents("ObjectStorage")));
+                currentStudents.clearStudents();
+                currentStudents.addStudents(loadedStudents);
                 launchMain(vMasterLayout, vStudentEditLayout, vStudents, hMasterLayout, masterScene, studentEditScene,
-                        primaryStage, masterTitle, studentPane, currentStudents, updateStudents, false, add, delete, export, stats, save, toTitle);
+                        primaryStage, masterTitle, studentPane, currentStudents, updateStudents, false, add, delete, export, stats, save, toTitle, sort);
             }
             if (!vTitleLayout.getChildren().contains(loadError)) {
                 vTitleLayout.getChildren().add(loadError);
@@ -429,13 +443,18 @@ public class StudentWindow extends Application {
 
         confirm.setOnAction(event -> {
             //Variables in lambdas have to be final which is a pain in the ass. So, you just clear everything then add students.
-
-            if (isValid(search.getText(), FileType.OTHER)) {
+            if (isValid(search.getText(), FileType.SERIALIZABLE)) {
+                currentStudents.clearStudents();
+                currentStudents.addStudents(Objects.requireNonNull(deserializeStudents(search.getText())));
+                launchMain(vMasterLayout, vStudents, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
+                        primaryStage, masterTitle, studentPane, currentStudents, updateStudents, false, add, delete, export, stats, save, toTitle, sort);
+            } else if (isValid(search.getText(), FileType.OTHER)) {
                 currentStudents.clearStudents();
                 currentStudents.addStudents(Objects.requireNonNull(readFile(search.getText())));
                 launchMain(vMasterLayout, vStudents, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
-                        primaryStage, masterTitle, studentPane, currentStudents, updateStudents, false, add, delete, export, stats, save, toTitle);
+                        primaryStage, masterTitle, studentPane, currentStudents, updateStudents, false, add, delete, export, stats, save, toTitle, sort);
             }
+
         });
 
         //Cancel just brings us back
@@ -475,9 +494,18 @@ public class StudentWindow extends Application {
         });
         exportCancel.setOnAction(event -> switchScene(masterScene, primaryStage));
 
+        stats.setOnAction(event -> displayStatistics(masterTitle, statsScene, statsPlane, vStatsLayout, primaryStage, currentStudents, updateStudents));
+
+        sort.setOnAction(event -> {
+            if (Arrays.equals(currentStudents.getStudents(), currentStudents.getSortByLastName()))
+                currentStudents.sortByID();
+            else currentStudents.sortByLastName();
+            updateTimer(updateStudents);
+        });
         //Back to Title Screen
         toTitle.setOnAction(event -> {
-            serializeStudents(currentStudents);
+            if (currentStudents.getStudents().length > 0)
+                serializeStudents(currentStudents);
             switchScene(titleScene, primaryStage);
         });
 
@@ -486,7 +514,7 @@ public class StudentWindow extends Application {
         });
         delete.setOnAction(event -> {
             launchMain(vMasterLayout, vStudents, vStudentEditLayout, hMasterLayout, masterScene, studentEditScene,
-                    primaryStage, masterTitle, studentPane, currentStudents, updateStudents, true, add, delete, export, stats, save, toTitle);
+                    primaryStage, masterTitle, studentPane, currentStudents, updateStudents, true, add, delete, export, stats, save, toTitle, sort);
         });
 
 
@@ -504,7 +532,7 @@ public class StudentWindow extends Application {
         timer.restart();
     }
 
-    public void updateScene(AnimationTimer timer) {
+    public void updateTimer(AnimationTimer timer) {
         timer.stop();
         timer.start();
     }
@@ -654,11 +682,12 @@ public class StudentWindow extends Application {
             int maxButtons = Math.min(size - i + 1, 2);
             Button[] newLineButtons = new Button[maxButtons];
             for (int j = 0; j < maxButtons; j++) {
-                int index = (i + 1) * 2 + j;
+                int index = (i + 1) * 2 + j - 1;
                 //Safety check
                 if (index < length) {
                     newLineButtons[j] = buttons[index];
                 }
+
             }
 
             newLines[i].getChildren().addAll(newLineButtons);
@@ -700,22 +729,29 @@ public class StudentWindow extends Application {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
-        if (delete)
-            delete = false;
-
         if (!stage.getScene().equals(scene))
             stage.setScene(scene);
     }
 
     public void displayStudentPanes(ClassRoom room, ScrollPane studentPane, VBox controller, VBox studentEditor, Scene scene, Scene masterScene, Pane[] studentPanes,
                                     Stage stage, AnimationTimer timer, boolean delete) {
-        int i = 0;
         Button[] editButtons = new Button[room.getStudents().length];
         Text[] names = new Text[room.getStudents().length];
         Text[] grades = new Text[room.getStudents().length];
         Text[] ids = new Text[room.getStudents().length];
         Text[] genders = new Text[room.getStudents().length];
+        ImageView search = getImage("search_icon");
+        TextField searchField = new TextField("");
+        Pane topPane = new Pane();
 
+
+        search.setLayoutX(300);
+        searchField.setLayoutY(topPane.getLayoutY() + 15);
+        searchField.setLayoutX(140);
+        topPane.getChildren().clear();
+        topPane.getChildren().addAll(search, searchField);
+
+        int i = 0;
         for (Student student : room.getStudents()) {
             studentPanes[i] = new Pane();
             //This is for action events
@@ -744,7 +780,7 @@ public class StudentWindow extends Application {
                 editButtons[i].setStyle("-fx-background-color: #FF0000");
                 editButtons[i].setOnAction(event -> {
                     deleteStudent(room, student, studentPanes, pane);
-                    updateScene(timer);
+                    updateTimer(timer);
                 });
 
             } else {
@@ -766,8 +802,46 @@ public class StudentWindow extends Application {
                     new CornerRadii(5), BorderWidths.DEFAULT)));
             i++;
         }
+
+        AnimationTimer updateTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                for (int i = 0; i < room.getStudents().length; i++) {
+                    Student student = room.getStudents()[i];
+                    //For some reason Background.EMPTY doesn't work. Great.
+                    Background toSet = new Background(new BackgroundFill(Color.LIGHTGREEN, new CornerRadii(5), new Insets(0)));
+                    if (!(searchField.getText().equals(" ") || searchField.getText().isEmpty())) {
+                        //Else ifs ensure that things are properly unhighlighted.
+                        if (student.getFullName().contains(searchField.getText()))
+                            studentPanes[i].setBackground(toSet);
+
+                        else if (student.getFirstName().contains(searchField.getText()))
+                            studentPanes[i].setBackground(toSet);
+
+                        else if (student.getLastName().contains(searchField.getText()))
+                            studentPanes[i].setBackground(toSet);
+
+                        else if (student.getGender().contains(searchField.getText()))
+                            studentPanes[i].setBackground(toSet);
+
+                        else if (String.valueOf(student.getYear()).contains(searchField.getText()))
+                            studentPanes[i].setBackground(toSet);
+
+                        else if (String.valueOf(student.getID()).equals(searchField.getText()))
+                            studentPanes[i].setBackground(toSet);
+                       
+                        else studentPanes[i].setBackground(Background.EMPTY);
+                    }
+                    else studentPanes[i].setBackground(Background.EMPTY);
+
+                }
+            }
+        };
+
+        searchField.setOnAction(event -> updateTimer(updateTimer));
         controller.getChildren().clear();
         controller.setLayoutY(-400);
+        controller.getChildren().add(topPane);
         controller.getChildren().addAll(studentPanes);
         studentPane.setContent(controller);
     }
@@ -783,17 +857,17 @@ public class StudentWindow extends Application {
 
         field.setMaxHeight(scale.getX() / 2);
         field.setOnAction(event -> {
-            if (!isValid(field.getText(), FileType.OTHER)) {
+            if (isValid(field.getText(), FileType.OTHER) || isValid(field.getText(), FileType.SERIALIZABLE)) {
+                error.setStroke(Color.WHITE);
+                error.setScaleX(0);
+                error.setScaleY(0);
+            }
+            //Makes it transparent
+            else {
                 error.setStrokeWidth(1);
                 error.setStroke(Color.RED);
                 error.setScaleX(scale.getX() / 10);
                 error.setScaleY(scale.getY() / 10);
-            }
-            //Makes it transparent
-            else {
-                error.setStroke(Color.WHITE);
-                error.setScaleX(0);
-                error.setScaleY(0);
             }
         });
 
@@ -918,7 +992,7 @@ public class StudentWindow extends Application {
             room.addStudents(new Student(studentFields[0].getText(), studentFields[1].getText(),
                     studentFields[2].getText(), Integer.parseInt(studentFields[3].getText()),
                     Long.parseLong(studentFields[4].getText())));
-            updateScene(masterUpdate);
+            updateTimer(masterUpdate);
         });
 
         cancel.setStyle("-fx-background-color: #FFCD76");
@@ -982,7 +1056,7 @@ public class StudentWindow extends Application {
             student.setYear(Integer.parseInt(studentFields[3].getText()));
             student.setID(Long.parseLong(studentFields[4].getText()));
 
-            updateScene(masterUpdate);
+            updateTimer(masterUpdate);
         });
 
         cancel.setStyle("-fx-background-color: #FFCD76");
@@ -1020,15 +1094,17 @@ public class StudentWindow extends Application {
 
     }
 
-    public void displayStatistics(Scene statsScene, ScrollPane displayPane, VBox display, Stage stage, ClassRoom room, AnimationTimer timer) {
+    public void displayStatistics(Text title, Scene statsScene, ScrollPane displayPane, VBox display, Stage stage, ClassRoom room, AnimationTimer timer) {
+        //Contains everything; displays stuff coolly
+        Pane[] displayPanes = new Pane[36];
         Button exit;
         Text boy, girl, grade9, grade10, grade11, grade12, lastName, studentNumber;
         Text[] lastNameLetters = new Text[26];
+        Scale scale = new Scale(20, 20);
 
         int boys = 0, girls = 0, year9 = 0, year10 = 0, year11 = 0, year12 = 0;
         Student[] students = room.getStudents();
         int[] lastNames = new int[26];
-
 
         for (int j = 0; j < room.getStudents().length; j++) {
             if (students[j] != null) {
@@ -1060,26 +1136,103 @@ public class StudentWindow extends Application {
             }
         }
 
-        studentNumber = new Text("Total Number of Students: " + students.length);
-        boy = new Text("Boys: " + boys);
-        girl = new Text("Girls: " + girls);
-        grade9 = new Text("9th Graders: " + year9);
-        grade10 = new Text("10th Graders: " + year10);
-        grade11 = new Text("11th Graders: " + year11);
-        grade12 = new Text("12th Graders: " + year12);
-        lastName = new Text("Last names beginning with: ");
+        int i = 0;
+        for (Pane pane : displayPanes) {
+            displayPanes[i] = new Pane();
+            i++;
+        }
 
-        display.getChildren().addAll(studentNumber, boy, girl, grade9, grade10, grade11, grade12, lastName);
+        HBox titleBox = new HBox();
+        titleBox.setAlignment(Pos.CENTER);
+        titleBox.setTranslateX(100);
+        title.setTextAlignment(TextAlignment.CENTER);
+        title.setTranslateY(20);
+        titleBox.getChildren().add(title);
+
+
+        studentNumber = new Text("Total Number of Students: " + students.length);
+        studentNumber.setLayoutX(20);
+        studentNumber.setLayoutY(displayPanes[0].getLayoutY() + 20);
+        displayPanes[0].getChildren().add(studentNumber);
+
+        boy = new Text("Boys: " + boys);
+        boy.setLayoutX(20);
+        boy.setLayoutY(displayPanes[1].getLayoutY() + 20);
+        displayPanes[1].getChildren().add(boy);
+
+        girl = new Text("Girls: " + girls);
+        girl.setLayoutX(20);
+        girl.setLayoutY(displayPanes[2].getLayoutY() + 20);
+        displayPanes[2].getChildren().add(girl);
+
+        grade9 = new Text("9th Graders: " + year9);
+        grade9.setLayoutX(20);
+        grade9.setLayoutY(displayPanes[3].getLayoutY() + 20);
+        displayPanes[3].getChildren().add(grade9);
+
+        grade10 = new Text("10th Graders: " + year10);
+        grade10.setLayoutX(20);
+        grade10.setLayoutY(displayPanes[4].getLayoutY() + 20);
+        displayPanes[4].getChildren().add(grade10);
+
+        grade11 = new Text("11th Graders: " + year11);
+        grade11.setLayoutX(20);
+        grade11.setLayoutY(displayPanes[5].getLayoutY() + 20);
+        displayPanes[5].getChildren().add(grade11);
+
+        grade12 = new Text("12th Graders: " + year12);
+        grade12.setLayoutX(20);
+        grade12.setLayoutY(displayPanes[6].getLayoutY() + 20);
+        displayPanes[6].getChildren().add(grade12);
+
+        lastName = new Text("Last names beginning with: ");
+        lastName.setLayoutX(20);
+        lastName.setLayoutY(displayPanes[7].getLayoutY() + 20);
+        displayPanes[7].getChildren().add(lastName);
+
+
         for (int j = 0; j < 26; j++) {
             lastNameLetters[j] = new Text((char) (j + 65) + " : " + lastNames[j]);
-            display.getChildren().add(lastNameLetters[j]);
+            lastNameLetters[j].setLayoutY(displayPanes[j + 8].getLayoutY() + 20);
+            lastNameLetters[j].setLayoutX(20);
+            displayPanes[j + 8].getChildren().add(lastNameLetters[j]);
         }
 
         exit = new Button("Exit");
         exit.setStyle("-fx-background-color: #FF0000");
-        exit.setOnAction(event -> updateScene(timer));
+        exit.setOnAction(event -> updateTimer(timer));
+        exit.setTextFill(Color.WHITE);
+        exit.setScaleX(scale.getX() / 12.5);
+        exit.setScaleY(scale.getY() / 12.5);
+        exit.setLayoutX(180);
+        exit.setLayoutY(displayPanes[35].getLayoutY() + 20);
+        displayPanes[35].getChildren().add(exit);
 
-        display.setSpacing(40);
+        int j = 0;
+        for (Pane pane : displayPanes) {
+            if (j < 35) {
+                pane.setBorder(new Border(new BorderStroke(Color.CYAN, BorderStrokeStyle.SOLID,
+                        new CornerRadii(10), BorderWidths.DEFAULT)));
+            }
+            j++;
+        }
+
+
+        VBox topBox = new VBox();
+        topBox.setAlignment(Pos.CENTER);
+        topBox.getChildren().add(titleBox);
+
+        VBox otherBox = new VBox();
+        otherBox.setAlignment(Pos.BOTTOM_CENTER);
+        otherBox.getChildren().addAll(displayPanes);
+        //Ensures there's space at the bottom
+        otherBox.getChildren().add(new Text(""));
+
+        display.setLayoutY(0);
+        display.setAlignment(Pos.CENTER);
+        display.getChildren().clear();
+        display.getChildren().addAll(topBox, otherBox);
+        display.setSpacing(60);
 
         displayPane.setContent(display);
         displayPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -1087,6 +1240,11 @@ public class StudentWindow extends Application {
 
 
         stage.setScene(statsScene);
+    }
+
+    public void clearPanes(Pane[] panes) {
+        for (Pane pane : panes)
+            pane.getChildren().clear();
     }
 
     public enum FileType {
