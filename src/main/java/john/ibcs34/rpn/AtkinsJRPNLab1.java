@@ -1,10 +1,8 @@
 package main.java.john.ibcs34.rpn;
 
-import main.java.john.ibcs34.SystemUtils;
-
 import java.util.Scanner;
 
-public class AtkinsJRPN {
+public class AtkinsJRPNLab1 {
 
     public static void main(String[] args) {
         processInput();
@@ -15,7 +13,7 @@ public class AtkinsJRPN {
         while (input.hasNext()) {
             String str = input.next();
             String output = "Identifier";
-            if (SystemUtils.isNumeric(str))
+            if (isNumeric(str))
                 output = "Double";
             if (isOperator(str))
                 output = "Operator";
@@ -35,5 +33,15 @@ public class AtkinsJRPN {
             default:
                 return false;
         }
+    }
+
+    //Util methods
+    public static boolean isNumeric(String input) {
+        try {
+            Double.parseDouble(input);
+        } catch (NullPointerException | NumberFormatException e) {
+            return false;
+        }
+        return true;
     }
 }
