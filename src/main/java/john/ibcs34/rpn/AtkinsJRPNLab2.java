@@ -14,22 +14,17 @@ public class AtkinsJRPNLab2 {
       boolean pop = true;
       String line = input.nextLine();
       for (String str : line.split("\\s")) {
-        String output = "Identifier";
         if (isNumeric(str)) {
-          output = "Double";
           stack.push(Double.parseDouble(str));
           pop = false;
         }
         if (isOperator(str)) {
-          output = "Operator";
           handleOperator(str, stack);
           pop = !str.equals("P");
         }
-        if (!str.isEmpty())
-          System.out.println(str + " : " + output);
       }
       if (pop)
-        System.out.println(stack.pop());
+        stack.printTop();
     }
 
   }
@@ -132,6 +127,10 @@ public class AtkinsJRPNLab2 {
         //General catch statement
         e.printStackTrace();
       }
+    }
+
+    public void printTop() {
+      System.out.println(arStack[topOfStack]);
     }
   }
 }
