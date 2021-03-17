@@ -19,14 +19,12 @@ public class AtkinsJRPNLab3 {
         if (isNumeric(str)) {
           stack.push(Double.parseDouble(str));
           pop = false;
-        }
-        else if (isOperator(str)) {
+        } else if (isOperator(str)) {
           handleOperator(str, stack, table);
           pop = !str.equals("P");
-        }
-        else {
+        } else {
           if (table.getSymbol(str) != null)
-              stack.push(table.getSymbol(str).getSymbVal());
+            stack.push(table.getSymbol(str).getSymbVal());
           else stack.push(table.insertSymbol(str).getSymbVal());
         }
       }
@@ -151,7 +149,8 @@ public class AtkinsJRPNLab3 {
     }
 
     public void printTop() {
-      System.out.println(arStack[topOfStack]);
+      if (topOfStack > -1)
+        System.out.println(arStack[topOfStack]);
     }
   }
 
@@ -212,7 +211,8 @@ public class AtkinsJRPNLab3 {
     }
 
     public void dumpTable() {
-      for (Symbol symbol : symbols) {
+      for (int i = 0; i < symbolNumber; i++) {
+        Symbol symbol = symbols[i];
         System.out.println("Symbol: " + symbol.getSymbID() + ", Value: " + symbol.getSymbVal());
       }
     }

@@ -150,7 +150,7 @@ public class AtkinsJLab7 {
 
         runningTotal = number;
 
-        for (int i = 0; i < 1000; ) {
+        for (int i = 0; i < 1000;) {
             if (runningTotal != 0) {
                 if (runningTotal % primes[i] == 0 && primes[i] != 0) {
                     runningTotal /= primes[i];
