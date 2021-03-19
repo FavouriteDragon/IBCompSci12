@@ -2,7 +2,7 @@ package main.java.john.ibcs34.rpn;
 
 import java.util.Scanner;
 
-public class AtkinsJRPNLab4 {
+public class AtkinsJRPNLabFinish {
 
   public static void main(String[] args) {
     processInput();
@@ -19,7 +19,7 @@ public class AtkinsJRPNLab4 {
     System.out.println("P: Dump Stack.");
     System.out.println("C: Clear Stack.");
     System.out.println("D: Dump Table.");
-    System.out.println("S: Clear Table.");
+    System.out.println("S: Clear Table Values.");
     while (input.hasNextLine()) {
       boolean pop = true;
       String line = input.nextLine();
@@ -64,6 +64,7 @@ public class AtkinsJRPNLab4 {
     return str.equals("*") || str.equals("+") || str.equals("-") || str.equals("^")
         || str.equals("/") || str.equals("=");
   }
+
   public static boolean isSymbol(String str) {
     return str.length() > 1;
   }
@@ -98,18 +99,15 @@ public class AtkinsJRPNLab4 {
         break;
       case "=":
         //Assigns values to symbols
+
         if (topItem != null) {
           if (topItem.getStackType() == StackType.ID) {
             if (bottomItem.getStackType() == StackType.DOUBLE) {
               table.getSymbol(topItem.getIdString()).setSymbVal(bottom);
-              //Keeps the item in the stack
-              stack.push(topItem);
             }
           } else if (bottomItem.getStackType() == StackType.ID) {
             if (topItem.getStackType() == StackType.DOUBLE) {
               table.getSymbol(bottomItem.getIdString()).setSymbVal(top);
-              //Keeps the item in the stack
-              stack.push(bottomItem);
             }
           }
         }
