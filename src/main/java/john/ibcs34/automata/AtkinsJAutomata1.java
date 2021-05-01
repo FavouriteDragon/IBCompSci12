@@ -69,7 +69,8 @@ public class AtkinsJAutomata1 extends Application {
     gridCtx.setStroke(Color.BLACK);
 
     //Horizontal and Vertical Lines
-    for (int i = 0; i < gridSize; i++) {
+    //The 2 * gridSize ensures the pane isn't weird
+    for (int i = 0; i < 2 * gridSize; i++) {
       //Left-Right
       gridCtx.strokeLine(0, i * cellSize, grid.getWidth(),
           i * cellSize);
