@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
+//Your grid is not overlayed correctly smh
 public class AtkinsJAutomata2 extends Application {
 
   public static void main(String[] args) {
@@ -28,8 +29,8 @@ public class AtkinsJAutomata2 extends Application {
         "integer.");
     System.out.println("-t for Update Interval (how fast the program runs). " +
         "Pass an Integer.");
-    System.out.println("-h for whether to make the grid use hexagons instead " +
-        "of squares. Pass a Boolean.");
+//    System.out.println("-h for whether to make the grid use hexagons instead " +
+//        "of squares. Pass a Boolean.");
     launch(args);
   }
 
@@ -59,7 +60,7 @@ public class AtkinsJAutomata2 extends Application {
     FileInputStream input;
     Image image = null;
     try {
-      input = new FileInputStream("src/main/resources/" + fileName +
+      input = new FileInputStream(/*"src/main/resources/" + **/fileName +
           ".png");
       //We need to be able to resize the image so we have to convert to
       // imageview
@@ -94,8 +95,8 @@ public class AtkinsJAutomata2 extends Application {
         gridSize = getInt(rawArguments.get(i + 1));
       if (raw.contains("-t"))
         updateInterval = getInt(rawArguments.get(i + 1));
-      if (raw.contains("-h"))
-        hexagon = getBool(rawArguments.get(i + 1));
+//      if (raw.contains("-h"))
+//        hexagon = getBool(rawArguments.get(i + 1));
     }
 
     primaryStage.setTitle("Automata Shell");
@@ -144,7 +145,7 @@ public class AtkinsJAutomata2 extends Application {
         }
       }
     } else {
-
+      //TODO??
     }
 
     //Shows the stage
