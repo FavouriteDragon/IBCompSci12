@@ -25,10 +25,7 @@ import javafx.util.Duration;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //Your grid is not overlayed correctly smh
 public class AtkinsJAutomata3 extends Application {
@@ -183,7 +180,7 @@ public class AtkinsJAutomata3 extends Application {
       int updateInterval = 20;
       //White is 0, block is 1.
       int[][] generations;
-
+      LinkedList<Polygon> hexes = new LinkedList<>();
 
       Parameters parameters = getParameters();
       List<String> rawArguments = parameters.getRaw();
@@ -235,7 +232,7 @@ public class AtkinsJAutomata3 extends Application {
       double hexSize = cellSize, v = Math.sqrt(3) / 2.0;
       int sceneSize = gridSize * cellSize + gridSize - cellSize;
       for (double y = -cellSize; y < sceneSize; y += hexSize * Math.sqrt(3)) {
-        for (double x = 0, dy = y; x < sceneSize; x += (3.0 / 2.0) * hexSize) {
+        for (double x = -cellSize, dy = y; x < sceneSize; x += (3.0 / 2.0) * hexSize) {
           Polygon tile = new Polygon();
           tile.getPoints().addAll(x, dy,
               x + hexSize, dy,
@@ -247,9 +244,11 @@ public class AtkinsJAutomata3 extends Application {
           tile.setStrokeWidth(2);
           tile.setStroke(Color.BLACK);
           dy = dy == y ? dy + hexSize * v : y;
-          root.getChildren().add(tile);
+          hexes.add(tile);
         }
       }
+
+      root.getChildren().addAll(hexes);
 
       //Shows the stage
       Scene master = new Scene(root, cellSize * gridSize + gridSize,
@@ -264,7 +263,7 @@ public class AtkinsJAutomata3 extends Application {
       //Sets all generation cells to 0 in case of bugs
       setGenerations(generations);
       //Displays the ant
-      displayAnt(gridCtx, ant, generations, cellSize);
+      //displayAnt();
 
       //KeyFrame animation
       KeyFrame frame = new KeyFrame(Duration.millis(updateInterval), event -> {
@@ -273,9 +272,9 @@ public class AtkinsJAutomata3 extends Application {
           placeAnt(ant, finalGridSize);
         }
         //Updates the ant
-        updateAnt(gridCtx, ant, generations, finalCellSize);
+        //updateAnt(gridCtx, ant, generations, finalCellSize);
         //Displays
-        displayAnt(gridCtx, ant, generations, finalCellSize);
+        //displayAnt(gridCtx, ant, generations, finalCellSize);
 
       });
       Timeline timeline = new Timeline(frame);
@@ -298,95 +297,41 @@ public class AtkinsJAutomata3 extends Application {
     ant.setDirection(Direction.N);
   }
 
-  public void updateGrid(GraphicsContext ctx, Ant ant, int[][] generations,
-                         int cellSize) {
-    //.length returns the length of the first array
-    if (generations[ant.getX()][ant.getY()] == 1) {
-      ctx.setFill(Color.BLACK);
-      ctx.fillRect(ant.getX(), ant.getY(), cellSize, cellSize);
-    } else {
-      //Resets then fixes the line
-      ctx.setFill(Color.WHITE);
-      ctx.fillRect(ant.getX(), ant.getY(), cellSize, cellSize);
-      //Fixes the lines
-      ctx.setStroke(Color.BLACK);
-      ctx.strokeRect(ant.getX(), ant.getY(), cellSize, cellSize);
-    }
-
-    if (generations[ant.getPrevX()][ant.getPrevY()] == 1) {
-      ctx.setFill(Color.BLACK);
-      ctx.fillRect(ant.getPrevX(), ant.getPrevY(), cellSize, cellSize);
-    } else {
-      //Resets then fixes the line
-      ctx.setFill(Color.WHITE);
-      ctx.fillRect(ant.getPrevX(), ant.getPrevY(), cellSize, cellSize);
-      //Fixes the lines
-      ctx.setStroke(Color.BLACK);
-      ctx.strokeRect(ant.getPrevX(), ant.getPrevY(), cellSize, cellSize);
-    }
-  }
-
-  public void displayAnt(GraphicsContext ctx, Ant ant,
-                         int[][] generations, int cellSize) {
-    //Updates the grid
-    updateGrid(ctx, ant, generations, cellSize);
-    //Clears the previous image
-    clearAnt(ctx, ant, generations, cellSize);
-    //Draw the ant
-    ctx.drawImage(getImage("langston's_ant"), ant.getX(), ant.getY(),
-        cellSize, cellSize);
+  public void displayAnt(List<Polygon> hexes, Ant ant, Map<Paint,
+      Direction> antMap) {
 
   }
 
-  public void clearAnt(GraphicsContext ctx, Ant ant,
-                       int[][] generations, int cellSize) {
-    int x = ant.getPrevX();
-    int y = ant.getPrevY();
-
-    Paint paint = ctx.getFill();
-    //Clears previous image
-    ctx.clearRect(x, y, cellSize, cellSize);
-    //Sets the original square colour back
-    if (paint == Color.BLACK && generations[x][y] == 1) {
-      ctx.setFill(paint);
-      ctx.fillRect(x, y, cellSize, cellSize);
-    } else {
-      ctx.setStroke(Color.BLACK);
-      ctx.strokeRect(x, y, cellSize, cellSize);
-    }
-  }
-
-  public void updateAnt(GraphicsContext ctx, Ant ant, int[][] generations,
-                        int cellSize) {
-    int squareVal = generations[ant.getX()][ant.getY()];
-    //Clockwise 90 and forward if white (0), anti-clockwise 90 and forward if
-    // black (1).
-    //Rotates the ant
-    rotateAnt(ant, squareVal == 0);
-    //Toggles the square in the array
-    toggleSquare(ant, generations, squareVal);
-    //Updates the grid again to colour in the grid
-    updateGrid(ctx, ant, generations, cellSize);
-    //Moves the ant
-    moveAnt(ant, cellSize);
+  public void updateAnt(List<Polygon> hexes, Ant ant,
+                        Map<Paint, Direction> antMap) {
 
   }
 
-  public void toggleSquare(Ant ant, int[][] generations, int squareVal) {
-    if (squareVal == 0)
-      generations[ant.getX()][ant.getY()] = 1;
-    else generations[ant.getX()][ant.getY()] = 0;
+  public void updateHexfield(List<Polygon> hexes, int[][] generations) {
+
   }
 
-  public void rotateAnt(Ant ant, boolean clockwise) {
-    ant.setPrevDirection(ant.getDirection());
+  public void rotateAnt(Direction direction) {
+
   }
 
   public void moveAnt(Ant ant, int cellSize) {
     ant.setPrevX(ant.getX());
     ant.setPrevY(ant.getY());
+
+    int moveX = cellSize;
+    int moveY = cellSize;
     switch (ant.getDirection()) {
+      case N:
+        switch (ant.getPrevDirection()) {
+          case N:
+            break;
+        }
+        case
     }
+
+    ant.setX(ant.getX() + moveX);
+    ant.setY(ant.getY() + moveY);
   }
 
   public int getInt(String arg) {
@@ -418,6 +363,10 @@ public class AtkinsJAutomata3 extends Application {
     private int prevX, prevY;
     private Direction direction;
     private Direction prevDir;
+    //In degrees. Uses a unit circle: 0 is right, 90 is up, 180 is left, 270
+    // is down, 360 is right.
+    private int orientation;
+    private int prevOrient;
 
     public Ant() {
       this.x = 0;
@@ -426,6 +375,8 @@ public class AtkinsJAutomata3 extends Application {
       this.prevX = 0;
       this.prevY = 0;
       this.prevDir = Direction.N;
+      this.orientation = 0;
+      this.prevOrient = 0;
     }
 
     public Ant(int x, int y) {
@@ -435,6 +386,8 @@ public class AtkinsJAutomata3 extends Application {
       this.prevX = 0;
       this.prevY = 0;
       this.prevDir = Direction.N;
+      this.orientation = 0;
+      this.prevOrient = 0;
     }
 
     public Ant(int x, int y, Direction direction) {
@@ -444,6 +397,8 @@ public class AtkinsJAutomata3 extends Application {
       this.prevX = 0;
       this.prevY = 0;
       this.prevDir = Direction.N;
+      this.orientation = 0;
+      this.prevOrient = 0;
     }
 
     public int getX() {
@@ -492,6 +447,22 @@ public class AtkinsJAutomata3 extends Application {
 
     public void setPrevDirection(Direction direction) {
       this.prevDir = direction;
+    }
+
+    public void setOrientation(int degrees) {
+      this.orientation = degrees;
+    }
+
+    public int getOrientation() {
+      return this.orientation;
+    }
+
+    public void setPrevOrient(int degrees) {
+      this.prevOrient = degrees;
+    }
+
+    public int getPrevOrientation() {
+      return this.prevOrient;
     }
   }
 
