@@ -9,6 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -23,9 +24,12 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 //Your grid is not overlayed correctly smh
 public class AtkinsJAutomata3 extends Application {
@@ -38,8 +42,6 @@ public class AtkinsJAutomata3 extends Application {
         "integer.");
     System.out.println("-t for Update Interval (how fast the program runs). " +
         "Pass an Integer.");
-//    System.out.println("-h for whether to make the grid use hexagons instead " +
-//        "of squares. Pass a Boolean.");
     launch(args);
   }
 
@@ -83,7 +85,7 @@ public class AtkinsJAutomata3 extends Application {
 
   public Paint[] getColourArray() {
     return new Paint[]{
-        Color.WHITE, Color.RED, Color.CORNSILK, Color.CORAL, Color.ORANGE,
+        Color.WHITE, Color.RED, Color.CORAL, Color.ORANGE,
         Color.YELLOW, Color.LIGHTGOLDENRODYELLOW, Color.YELLOWGREEN,
         Color.GREEN, Color.TURQUOISE, Color.AZURE,
         Color.BLUE, Color.INDIGO, Color.PURPLE, Color.VIOLET, Color.PINK,
@@ -194,8 +196,6 @@ public class AtkinsJAutomata3 extends Application {
           gridSize = getInt(rawArguments.get(i + 1));
         if (raw.contains("-t"))
           updateInterval = getInt(rawArguments.get(i + 1));
-//      if (raw.contains("-h"))
-//        hexagon = getBool(rawArguments.get(i + 1));
       }
 
       //Canvas shiz
@@ -207,9 +207,8 @@ public class AtkinsJAutomata3 extends Application {
           cellSize * gridSize + gridSize);
 
       generations = new int[(int) grid.getWidth()][(int) grid.getHeight()];
-
       Ant ant = new Ant();
-      placeAnt(ant, (int) grid.getHeight());
+      Polygon centre = new Polygon();
 
       root.getChildren().addAll(base, grid);
       grid.toFront();
@@ -229,23 +228,28 @@ public class AtkinsJAutomata3 extends Application {
       //Hexagon time??
       //TODO: Store squares in array vs drawing them like this/use layers
 
-      double hexSize = cellSize, v = Math.sqrt(3) / 2.0;
+      double hexSize = cellSize, trigMult = Math.sqrt(3) / 2.0;
       int sceneSize = gridSize * cellSize + gridSize - cellSize;
-      for (double y = -cellSize; y < sceneSize; y += hexSize * Math.sqrt(3)) {
+      for (double y = -cellSize; y < sceneSize; y += hexSize * trigMult * 2) {
         for (double x = -cellSize, dy = y; x < sceneSize; x += (3.0 / 2.0) * hexSize) {
+          //Points are clockwise
           Polygon tile = new Polygon();
           tile.getPoints().addAll(x, dy,
               x + hexSize, dy,
-              x + hexSize * (3.0 / 2.0), dy + hexSize * v,
-              x + hexSize, dy + hexSize * Math.sqrt(3),
-              x, dy + hexSize * Math.sqrt(3),
-              x - (hexSize / 2.0), dy + hexSize * v);
+              x + hexSize * (3.0 / 2.0), dy + hexSize * trigMult,
+              x + hexSize, dy + hexSize * trigMult * 2,
+              x, dy + hexSize * trigMult * 2,
+              x - (hexSize / 2.0), dy + hexSize * trigMult);
           tile.setFill(getColour(0));
           tile.setStrokeWidth(2);
           tile.setStroke(Color.BLACK);
-          dy = dy == y ? dy + hexSize * v : y;
+
+          if (y / sceneSize > 0.495 && y / sceneSize < 0.51 && x / sceneSize > 0.495 && x / sceneSize < 0.51)
+            centre = tile;
+          dy = dy == y ? dy + hexSize * trigMult : y;
           hexes.add(tile);
         }
+
       }
 
       root.getChildren().addAll(hexes);
@@ -262,19 +266,27 @@ public class AtkinsJAutomata3 extends Application {
       int finalCellSize = cellSize;
       //Sets all generation cells to 0 in case of bugs
       setGenerations(generations);
+      //Places the ant
+      placeAnt(ant, centre);
+      ant.setStartHex(centre);
       //Displays the ant
-      //displayAnt();
+      displayAnt(hexes, ant, antMap);
 
       //KeyFrame animation
+      Polygon finalCentre = centre;
       KeyFrame frame = new KeyFrame(Duration.millis(updateInterval), event -> {
         if (ant.getX() >= finalGridSize - 1 || ant.getY() >= finalGridSize - 1
             || ant.getX() == 0 || ant.getY() == 0) {
-          placeAnt(ant, finalGridSize);
+          placeAnt(ant, finalCentre);
         }
+
+        //HOW IT WORKS: CHANGE TO NEXT COLOUR IN SEQUENCE, ROTATE BASED ON
+        // PREVIOUS COLOUR
         //Updates the ant
-        //updateAnt(gridCtx, ant, generations, finalCellSize);
+        updateHexfield(hexes, ant, generations, antMap);
+        updateAnt(hexes, ant, antMap, finalCellSize, generations);
         //Displays
-        //displayAnt(gridCtx, ant, generations, finalCellSize);
+        displayAnt(hexes, ant, antMap);
 
       });
       Timeline timeline = new Timeline(frame);
@@ -291,47 +303,239 @@ public class AtkinsJAutomata3 extends Application {
     }
   }
 
-  public void placeAnt(Ant ant, int gridSize) {
-    ant.setX(gridSize / 2);
-    ant.setY(gridSize / 2);
+  public void placeAnt(Ant ant, Polygon centre) {
+    ant.setX((int) getCentreFromHex(centre)[0]);
+    ant.setY((int) getCentreFromHex(centre)[1]);
+    ant.setHex(centre);
     ant.setDirection(Direction.N);
   }
 
   public void displayAnt(List<Polygon> hexes, Ant ant, Map<Paint,
       Direction> antMap) {
+    ant.getHex().setEffect(new Glow());
+    ant.getHex().setStroke(Color.RED);
+  }
+
+  public void updateAnt(LinkedList<Polygon> hexes, Ant ant,
+                        Map<Paint, Direction> antMap, int cellSize,
+                        int[][] generations) {
+    ant.getPrevHex().setStroke(Color.BLACK);
+    Polygon hex = ant.getHex();
+    //If the hex is null I have other issues; todo print out an error message
+    try {
+      rotateAnt(ant, antMap.get(hex.getFill()));
+      moveAnt(ant, cellSize, hexes, generations);
+    } catch (NullPointerException e) {
+      e.printStackTrace();
+    }
 
   }
 
-  public void updateAnt(List<Polygon> hexes, Ant ant,
-                        Map<Paint, Direction> antMap) {
-
+  public void updateHexfield(List<Polygon> hexes, Ant ant, int[][] generations,
+                             Map<Paint, Direction> antMap) {
+    toggleHexes(ant, antMap, generations);
+    ant.getHex().setFill(getColour(generations[(int)
+        getCentreFromHex(ant.getHex())[0]][(int)
+        getCentreFromHex(ant.getHex())[1]]));
   }
 
-  public void updateHexfield(List<Polygon> hexes, int[][] generations) {
-
+  public void toggleHexes(Ant ant, Map<Paint, Direction> antMap,
+                          int[][] generations) {
+    //It's errorring (erroring?) cause it's negative. Why, good sir?
+    generations[(int) ant.getX()][(int) ant.getY()]++;
+    if (generations[(int) ant.getX()][(int) ant.getY()] >= antMap.size())
+      generations[(int) ant.getX()][(int) ant.getY()] = 0;
   }
 
-  public void rotateAnt(Direction direction) {
-
+  public void rotateAnt(Ant ant, Direction direction) {
+    ant.setPrevOrient(ant.getOrientation());
+    switch (direction) {
+      case N:
+        break;
+      //Anti clockwise
+      case M:
+        ant.setOrientation(ant.getOrientation() - 60);
+        break;
+      case L:
+        ant.setOrientation(ant.getOrientation() - 120);
+        break;
+      case U:
+        ant.setOrientation(ant.getOrientation() + 180);
+        break;
+      case S:
+        ant.setOrientation(ant.getOrientation() + 120);
+        break;
+      case R:
+        ant.setOrientation(ant.getOrientation() + 60);
+        break;
+    }
   }
 
-  public void moveAnt(Ant ant, int cellSize) {
+  public void moveAnt(Ant ant, int cellSize, LinkedList<Polygon> hexes,
+                      int[][] generations) {
+    //Ant only ever needs to move 2 side lengths to reach the corner of the
+    // next hex
     ant.setPrevX(ant.getX());
     ant.setPrevY(ant.getY());
 
-    int moveX = cellSize;
-    int moveY = cellSize;
-    switch (ant.getDirection()) {
-      case N:
-        switch (ant.getPrevDirection()) {
-          case N:
-            break;
-        }
-        case
-    }
-
+    //Trig due to hexes
+    //Need to fix?
+    //Width is 2 * cellSize
+    double moveX =
+        (cellSize * 2 * Math.cos(Math.toRadians(30)));
+    //In this case, negative is up, and we want the ant to start facing up
+    //Height is cellSize * Math.sqrt(3) / 2
+    double moveY =
+        (cellSize * Math.sqrt(3) / 2 * Math.sin(Math.
+            toRadians(30))) * -1;
     ant.setX(ant.getX() + moveX);
     ant.setY(ant.getY() + moveY);
+
+    Polygon hexToSet = null;
+    for (Polygon hex : hexes) {
+      if (hexToSet == null) {
+        Point antPos = new Point((int) ant.getX(), (int) ant.getY());
+        //Points on the hexagon
+        Point a = new Point(), b = new Point(), c = new Point(),
+            d = new Point(), e = new Point(), f = new Point();
+        a = fillPoint(hex, a, 0);
+        b = fillPoint(hex, b, 1);
+        c = fillPoint(hex, c, 2);
+        d = fillPoint(hex, d, 3);
+        e = fillPoint(hex, e, 4);
+        f = fillPoint(hex, f, 5);
+        if (hex != ant.getHex() && isPointInHexagon(antPos, a, b, c, d, e, f)) {
+          hexToSet = hex;
+          ant.setPrevHex(ant.getHex());
+          ant.setHex(hexToSet);
+
+//          ant.setX(hexToSet.getPoints().get(0));
+//          ant.setY(hexToSet.getPoints().get(1));
+        }
+      }
+    }
+
+    boolean outOfBounds = false;
+    try {
+      //Tests to see whether the ant is out of bounds
+      getColour(generations[(int)
+          getCentreFromHex(ant.getHex())[0]][(int)
+          getCentreFromHex(ant.getHex())[1]]);
+    } catch (ArrayIndexOutOfBoundsException e) {
+      outOfBounds = true;
+    }
+    if (outOfBounds)
+      placeAnt(ant, ant.getStartHex());
+  }
+
+  /**
+   * @param hexagon
+   * @param point
+   * @param pointOrder The point on the hexagon. Starts at 0, goes to 5.
+   * @return
+   */
+  public Point fillPoint(Polygon hexagon, Point point, int pointOrder) {
+    point.setLocation(hexagon.getPoints().get(pointOrder * 2),
+        hexagon.getPoints().get(pointOrder * 2 + 1));
+    return point;
+  }
+
+  //Points go x, y, x2, y2, e.t.c like how they're put in
+  public double[] getCentreFromHex(Polygon hex) {
+    double[] pos = new double[2];
+    double[] xCoords = new double[2];
+    double[] yCoords = new double[2];
+    //First 2 x coordinates can be divided for the width.
+    //First and last y coordinates can be divided for the height.
+    for (int i = 0; i < hex.getPoints().size(); i++) {
+      if (i == 0)
+        xCoords[i] = hex.getPoints().get(i);
+      else if (i == 1)
+        yCoords[0] = hex.getPoints().get(i);
+      else if (i == 2)
+        xCoords[1] = hex.getPoints().get(i);
+      else if (i == 11)
+        yCoords[1] = hex.getPoints().get(i);
+
+    }
+
+    //We want to add and not subtract. While subtracting would find the exact,
+    //per-hex size coord, we want the coordinates relative to the grid, and
+    // I'm too lazy to redo this.
+    double xAvg = xCoords[0] + xCoords[1];
+    xAvg /= 2;
+    pos[0] = xAvg;
+
+    double yAvg = yCoords[0] + yCoords[1];
+    yAvg /= 2;
+    pos[1] = yAvg;
+
+    return pos;
+  }
+
+  //Methods for whether a point is in a hexagon
+
+  // Determines the distance between point1 and point2
+  public double distance(Point point1, Point point2) {
+    return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y,
+        2));
+  }
+
+  // Calculates the midpoint on the segment between point1 and point2
+  public Point midpoint(Point point1, Point point2) {
+    return new Point((point1.x + point2.x) / 2, (point1.y + point2.y) / 2);
+  }
+
+  // Determines on which side of the line between lineA and lineB the given point is.
+  public double sign(Point point, Point lineA, Point lineB) {
+    return (point.x - lineB.x) * (lineA.y - lineB.y) - (point.y - lineB.y) * (lineA.x - lineB.x);
+  }
+
+  // Check if the given point is in the triangle made up of points A, B and C
+  public boolean isPointInTriangle(Point point, Point triangleA,
+                                   Point triangleB, Point triangleC) {
+    double distanceAB = sign(point, triangleA, triangleB);
+    double distanceBC = sign(point, triangleB, triangleC);
+    double distanceAC = sign(point, triangleC, triangleA);
+
+    boolean hasNegativeSign = (distanceAB < 0) || (distanceBC < 0) || (distanceAC < 0);
+    boolean hasPositiveSign = (distanceAB > 0) || (distanceBC > 0) || (distanceAC > 0);
+
+    return !(hasNegativeSign && hasPositiveSign); // XOR
+  }
+
+  // Check if the given point is in the hexagon made up of points A, B, C, D, E and F
+  public boolean isPointInHexagon(Point point, Point hexagonA, Point hexagonB,
+                                  Point hexagonC,
+                                  Point hexagonD, Point hexagonE, Point hexagonF) {
+    // Determine hexagon circles
+    Point centre = midpoint(hexagonA, hexagonD);
+    double outerRadius = distance(centre, hexagonA);
+    double innerRadius = distance(centre, midpoint(hexagonA, hexagonB));
+
+    // Circle check
+//    double distanceToCentre = distance(point, centre);
+//    if (distanceToCentre > outerRadius) return false;
+//    if (distanceToCentre <= innerRadius) return true;
+    //Note: While this is more correct, for the purposes of our lab, we're
+    // gonna cheat:
+    double distanceToCentre = distance(point, centre);
+    if (distanceToCentre <= outerRadius)
+      return true;
+
+    // Determine closest points
+    List<Map.Entry<Point, Double>> distances = new LinkedList(Arrays.asList
+        (hexagonA, hexagonB, hexagonC, hexagonD, hexagonE, hexagonF).stream()
+        .collect(Collectors.toMap(hexagonPoint -> hexagonPoint, hexagonPoint ->
+            distance(point, hexagonPoint))).entrySet());
+    distances.sort(Map.Entry.comparingByValue());
+
+    // Optional
+    if (distances.get(0).getValue().equals(distances.get(1).getValue()))
+      return false;
+
+    // Triangle check
+    return isPointInTriangle(point, distances.get(0).getKey(), distances.get(1).getKey(), distances.get(2).getKey());
   }
 
   public int getInt(String arg) {
@@ -359,14 +563,18 @@ public class AtkinsJAutomata3 extends Application {
 
   public class Ant {
 
-    private int x, y;
-    private int prevX, prevY;
+    //TODO: Possibly store a polygon in the ant? Help me
+    private double x, y;
+    private double prevX, prevY;
     private Direction direction;
     private Direction prevDir;
     //In degrees. Uses a unit circle: 0 is right, 90 is up, 180 is left, 270
     // is down, 360 is right.
     private int orientation;
     private int prevOrient;
+    private Polygon hex;
+    private Polygon prevHex;
+    private Polygon startHex;
 
     public Ant() {
       this.x = 0;
@@ -377,6 +585,9 @@ public class AtkinsJAutomata3 extends Application {
       this.prevDir = Direction.N;
       this.orientation = 0;
       this.prevOrient = 0;
+      this.hex = new Polygon();
+      this.prevHex = new Polygon();
+      this.startHex = new Polygon();
     }
 
     public Ant(int x, int y) {
@@ -388,6 +599,9 @@ public class AtkinsJAutomata3 extends Application {
       this.prevDir = Direction.N;
       this.orientation = 0;
       this.prevOrient = 0;
+      this.hex = new Polygon();
+      this.prevHex = new Polygon();
+      this.startHex = new Polygon();
     }
 
     public Ant(int x, int y, Direction direction) {
@@ -399,37 +613,40 @@ public class AtkinsJAutomata3 extends Application {
       this.prevDir = Direction.N;
       this.orientation = 0;
       this.prevOrient = 0;
+      this.hex = new Polygon();
+      this.prevHex = new Polygon();
+      this.startHex = new Polygon();
     }
 
-    public int getX() {
+    public double getX() {
       return this.x;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
       this.x = x;
     }
 
-    public int getPrevX() {
+    public double getPrevX() {
       return this.prevX;
     }
 
-    public void setPrevX(int x) {
+    public void setPrevX(double x) {
       this.prevX = x;
     }
 
-    public int getY() {
+    public double getY() {
       return this.y;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
       this.y = y;
     }
 
-    public int getPrevY() {
+    public double getPrevY() {
       return this.prevY;
     }
 
-    public void setPrevY(int y) {
+    public void setPrevY(double y) {
       this.prevY = y;
     }
 
@@ -449,12 +666,13 @@ public class AtkinsJAutomata3 extends Application {
       this.prevDir = direction;
     }
 
-    public void setOrientation(int degrees) {
-      this.orientation = degrees;
+    public int getOrientation() {
+      //Want the ant to be default facing up
+      return this.orientation + 90;
     }
 
-    public int getOrientation() {
-      return this.orientation;
+    public void setOrientation(int degrees) {
+      this.orientation = degrees;
     }
 
     public void setPrevOrient(int degrees) {
@@ -463,6 +681,30 @@ public class AtkinsJAutomata3 extends Application {
 
     public int getPrevOrientation() {
       return this.prevOrient;
+    }
+
+    public Polygon getHex() {
+      return this.hex;
+    }
+
+    public void setHex(Polygon hex) {
+      this.hex = hex;
+    }
+
+    public Polygon getPrevHex() {
+      return this.prevHex;
+    }
+
+    public void setPrevHex(Polygon hex) {
+      this.prevHex = hex;
+    }
+
+    public Polygon getStartHex() {
+      return this.startHex;
+    }
+
+    public void setStartHex(Polygon hex) {
+      this.startHex = hex;
     }
   }
 
