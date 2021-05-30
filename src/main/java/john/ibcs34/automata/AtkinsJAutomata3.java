@@ -9,7 +9,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -259,8 +258,11 @@ public class AtkinsJAutomata3 extends Application {
           tile.setStrokeWidth(2);
           tile.setStroke(Color.BLACK);
 
-          if (y / sceneSize > 0.495 && y / sceneSize < 0.51 && x / sceneSize > 0.495 && x / sceneSize < 0.51)
+          if (y / sceneSize > 0.495 && y / sceneSize < 0.51 && x / sceneSize > 0.495 && x / sceneSize < 0.51) {
             centre = tile;
+            ant.setStartX(xPos);
+            ant.setStartY(yPos);
+          }
           dy = dy == y ? dy + hexSize * trigMult : y;
           hexes.add(tile);
 
@@ -269,6 +271,7 @@ public class AtkinsJAutomata3 extends Application {
           else xPos++;
 
           hexagonField[yPos][xPos] = tile;
+
         }
         yPos++;
       }
@@ -281,33 +284,32 @@ public class AtkinsJAutomata3 extends Application {
       primaryStage.setScene(master);
 
       //Actual update logic
-      int finalGridSize = (int) grid.getHeight();
       //Lambdas are wack and don't let you just use gridSize, so you just use a
       // temp variable. Same for cellSize.
-      int finalCellSize = cellSize;
       //Sets all generation cells to 0 in case of bugs
       setGenerations(generations);
       //Places the ant
-      placeAnt(ant, centre);
+      resetAnt(ant);
       ant.setStartHex(centre);
       //Displays the ant
-      displayAnt(hexes, ant, antMap);
+      displayAnt(ant);
+      System.out.println(ant.getStartX());
+      System.out.println(ant.getStartY());
 
       //KeyFrame animation
-      Polygon finalCentre = centre;
       KeyFrame frame = new KeyFrame(Duration.millis(updateInterval), event -> {
-        if (ant.getX() >= finalGridSize - 1 || ant.getY() >= finalGridSize - 1
+        if (ant.getX() > hexagonField.length - 1 || ant.getY() > hexagonField.length - 1
             || ant.getX() == 0 || ant.getY() == 0) {
-          placeAnt(ant, finalCentre);
+          resetAnt(ant);
         }
 
         //HOW IT WORKS: CHANGE TO NEXT COLOUR IN SEQUENCE, ROTATE BASED ON
         // PREVIOUS COLOUR
         //Updates the ant
-        updateHexfield(hexes, ant, generations, antMap);
-        updateAnt(hexes, ant, antMap, finalCellSize, generations);
+        updateHexfield(ant, generations, antMap);
+        updateAnt(ant, antMap, generations, hexagonField);
         //Displays
-        displayAnt(hexes, ant, antMap);
+        displayAnt(ant);
 
       });
       Timeline timeline = new Timeline(frame);
@@ -324,84 +326,81 @@ public class AtkinsJAutomata3 extends Application {
     }
   }
 
-  public void placeAnt(Ant ant, Polygon centre) {
+  public void resetAnt(Ant ant) {
     ant.getPrevHex().setStroke(Color.BLACK);
-    ant.setX(getCentreFromHex(centre)[0]);
-    ant.setY(getCentreFromHex(centre)[1]);
-    ant.setHex(centre);
+    ant.setX(ant.getStartX());
+    ant.setY(ant.getStartY());
+    ant.setHex(ant.getStartHex());
     ant.setDirection(Direction.N);
   }
 
-  public void displayAnt(List<Polygon> hexes, Ant ant, Map<Paint,
-      Direction> antMap) {
-    ant.getHex().setEffect(new Glow());
+  public void displayAnt(Ant ant) {
     ant.getHex().setStroke(Color.PURPLE);
   }
 
-  public void updateAnt(LinkedList<Polygon> hexes, Ant ant,
-                        Map<Paint, Direction> antMap, int cellSize,
-                        int[][] generations) {
+  public void updateAnt(Ant ant,
+                        Map<Paint, Direction> antMap,
+                        int[][] generations, Polygon[][] hexField) {
+    //Resets visuals
     ant.getPrevHex().setStroke(Color.BLACK);
-    Polygon hex = ant.getHex();
     //If the hex is null I have other issues; todo print out an error message
     try {
       //Rotates the ant
-      rotateAnt(ant, ant.getDirection());
-      moveAnt(ant, cellSize, hexes, generations);
+      rotateAnt(ant, antMap.get(ant.getHex().getFill()));
+      moveAnt(ant, generations, hexField);
     } catch (NullPointerException e) {
       e.printStackTrace();
     }
 
   }
 
-  public void updateHexfield(List<Polygon> hexes, Ant ant, int[][] generations,
+  public void updateHexfield(Ant ant, int[][] generations,
                              Map<Paint, Direction> antMap) {
-    //Sets the direction here
-    ant.setDirection(antMap.get(ant.getHex().getFill()));
     toggleHexes(ant, antMap, generations);
-    ant.getHex().setFill(getColour(generations[(int) ant.getX()]
-        [(int) ant.getY()]));
+    ant.getHex().setFill(getColour(generations[ant.getY()]
+        [ant.getX()]));
   }
 
   public void toggleHexes(Ant ant, Map<Paint, Direction> antMap,
                           int[][] generations) {
     //It's errorring (erroring?) cause it's negative. Why, good sir?
     try {
-      generations[(int) ant.getX()][(int) ant.getY()]++;
-      if (generations[(int) ant.getX()][(int) ant.getY()] >= antMap.size())
-        generations[(int) ant.getX()][(int) ant.getY()] = 0;
+      generations[ant.getY()][ant.getX()]++;
+      if (generations[ant.getY()][ant.getX()] >= antMap.size())
+        generations[ant.getY()][ant.getX()] = 0;
     } catch (ArrayIndexOutOfBoundsException e) {
-      placeAnt(ant, ant.getStartHex());
+      resetAnt(ant);
     }
   }
 
   public void rotateAnt(Ant ant, Direction direction) {
-    ant.setPrevOrient(ant.getOrientation());
+    ant.setDirection(direction);
+    ant.setPrevDegreeOrient(ant.getDegreeOrientation());
     System.out.println(direction);
     switch (direction) {
       case N:
         break;
       //Anti clockwise
       case M:
-        ant.setOrientation(ant.getOrientation() + 60);
+        ant.setDegreeOrientation(ant.getDegreeOrientation() + 60);
         break;
       case L:
-        ant.setOrientation(ant.getOrientation() + 120);
+        ant.setDegreeOrientation(ant.getDegreeOrientation() + 120);
         break;
       case U:
-        ant.setOrientation(ant.getOrientation() + 180);
+        ant.setDegreeOrientation(ant.getDegreeOrientation() + 180);
         break;
       case S:
-        ant.setOrientation(ant.getOrientation() - 120);
+        ant.setDegreeOrientation(ant.getDegreeOrientation() - 120);
         break;
       case R:
-        ant.setOrientation(ant.getOrientation() - 60);
+        ant.setDegreeOrientation(ant.getDegreeOrientation() - 60);
         break;
     }
+    ant.setOrientation(ant.getOrientationFromDegree());
   }
 
-  public void moveAnt(Ant ant, int cellSize, LinkedList<Polygon> hexes,
-                      int[][] generations) {
+  public void moveAnt(Ant ant, int[][] generations, Polygon[][] hexField) {
     //Ant only ever needs to move 2 side lengths to reach the corner of the
     // next hex
     ant.setPrevX(ant.getX());
@@ -417,65 +416,49 @@ public class AtkinsJAutomata3 extends Application {
     //Diagonal down right is +1 x, + 1 y
 
 
+    int moveX = 0, moveY = 0;
 
-    double angle = ant.getOrientation() + 90;
-    //No more 30 degree angles here!
-    if (!(ant.getDirection().equals(Direction.N) ||
-        ant.getDirection().equals(Direction.U))) {
-      if (angle % 30 == 0 && angle % 60 != 0)
-        if (angle < 0)
-          angle -= 30;
-        else if (angle > 0)
-          angle += 30;
+    switch (ant.getOrientation()) {
+      case UP:
+        moveY -= 2;
+        break;
+      case TOP_LEFT:
+        moveX -= 1;
+        moveY -= 1;
+        break;
+      case BOTTOM_LEFT:
+        moveX -= 1;
+        moveY += 2;
+        break;
+      case DOWN:
+        moveY += 2;
+        break;
+      case BOTTOM_RIGHT:
+        moveX += 1;
+        moveY += 1;
+        break;
+      case TOP_RIGHT:
+        moveX += 1;
+        moveY -= 1;
+        break;
     }
-    System.out.println("Angle: " + angle);
 
-    //Trig due to hexes
-    //Need to fix?
-    //Width is 2 * cellSize
-    double moveX = (cellSize * 2 * Math.cos(Math.toRadians(angle)));
-    // + 90)));
-    //In this case, negative is up, and we want the ant to start facing up
-    //Height is cellSize * Math.sqrt(3) / 2
-    double moveY = (cellSize * Math.sqrt(3) / 2 * Math.sin
-        (Math.toRadians(angle))) * -1;
     ant.setX(ant.getX() + moveX);
     ant.setY(ant.getY() + moveY);
-
-    Polygon hexToSet = null;
-    for (Polygon hex : hexes) {
-      if (hexToSet == null) {
-        Point antPos = new Point((int) ant.getX(), (int) ant.getY());
-        //Points on the hexagon
-        Point a = new Point(), b = new Point(), c = new Point(),
-            d = new Point(), e = new Point(), f = new Point();
-        a = fillPoint(hex, a, 0);
-        b = fillPoint(hex, b, 1);
-        c = fillPoint(hex, c, 2);
-        d = fillPoint(hex, d, 3);
-        e = fillPoint(hex, e, 4);
-        f = fillPoint(hex, f, 5);
-        if (hex != ant.getHex() && isPointInHexagon(antPos, a, b, c, d, e, f)) {
-          hexToSet = hex;
-          ant.setPrevHex(ant.getHex());
-          ant.setHex(hexToSet);
-          ant.setX(getCentreFromHex(hexToSet)[0]);
-          ant.setY(getCentreFromHex(hexToSet)[1]);
-        }
-      }
-    }
+    ant.setPrevHex(ant.getHex());
+    ant.setHex(hexField[ant.getY()][ant.getX()]);
 
     boolean outOfBounds = false;
     try {
       //Tests to see whether the ant is out of bounds
       getColour(generations[(int)
-          getCentreFromHex(ant.getHex())[0]][(int)
-          getCentreFromHex(ant.getHex())[1]]);
+          getCentreFromHex(ant.getHex())[1]][(int)
+          getCentreFromHex(ant.getHex())[0]]);
     } catch (ArrayIndexOutOfBoundsException e) {
       outOfBounds = true;
     }
     if (outOfBounds)
-      placeAnt(ant, ant.getStartHex());
+      resetAnt(ant);
   }
 
   /**
@@ -613,20 +596,30 @@ public class AtkinsJAutomata3 extends Application {
     M
   }
 
-  public class Ant {
+  public enum Orientation {
+    UP,
+    TOP_RIGHT,
+    BOTTOM_RIGHT,
+    DOWN,
+    BOTTOM_LEFT,
+    TOP_LEFT
+  }
 
-    //TODO: Possibly store a polygon in the ant? Help me
-    private double x, y;
-    private double prevX, prevY;
+  public static class Ant {
+
+    private Orientation orientation;
+    //The position in the array of hexagons
+    private int x, y, prevX, prevY;
     private Direction direction;
     private Direction prevDir;
     //In degrees. Uses a unit circle: 0 is right, 90 is up, 180 is left, 270
     // is down, 360 is right.
-    private int orientation;
+    private int orientationDegree;
     private int prevOrient;
     private Polygon hex;
     private Polygon prevHex;
     private Polygon startHex;
+    private int startX, startY;
 
     public Ant() {
       this.x = 0;
@@ -635,11 +628,14 @@ public class AtkinsJAutomata3 extends Application {
       this.prevX = 0;
       this.prevY = 0;
       this.prevDir = Direction.N;
-      this.orientation = 0;
+      this.orientationDegree = 0;
       this.prevOrient = 0;
       this.hex = new Polygon();
       this.prevHex = new Polygon();
       this.startHex = new Polygon();
+      this.orientation = Orientation.UP;
+      this.startX = 0;
+      this.startY = 0;
     }
 
     public Ant(int x, int y) {
@@ -649,11 +645,14 @@ public class AtkinsJAutomata3 extends Application {
       this.prevX = 0;
       this.prevY = 0;
       this.prevDir = Direction.N;
-      this.orientation = 0;
+      this.orientationDegree = 0;
       this.prevOrient = 0;
       this.hex = new Polygon();
       this.prevHex = new Polygon();
       this.startHex = new Polygon();
+      this.orientation = Orientation.UP;
+      this.startX = 0;
+      this.startY = 0;
     }
 
     public Ant(int x, int y, Direction direction) {
@@ -663,42 +662,45 @@ public class AtkinsJAutomata3 extends Application {
       this.prevX = 0;
       this.prevY = 0;
       this.prevDir = Direction.N;
-      this.orientation = 0;
+      this.orientationDegree = 0;
       this.prevOrient = 0;
       this.hex = new Polygon();
       this.prevHex = new Polygon();
       this.startHex = new Polygon();
+      this.orientation = Orientation.UP;
+      this.startX = 0;
+      this.startY = 0;
     }
 
-    public double getX() {
+    public int getX() {
       return this.x;
     }
 
-    public void setX(double x) {
+    public void setX(int x) {
       this.x = x;
     }
 
-    public double getPrevX() {
+    public int getPrevX() {
       return this.prevX;
     }
 
-    public void setPrevX(double x) {
+    public void setPrevX(int x) {
       this.prevX = x;
     }
 
-    public double getY() {
+    public int getY() {
       return this.y;
     }
 
-    public void setY(double y) {
+    public void setY(int y) {
       this.y = y;
     }
 
-    public double getPrevY() {
+    public int getPrevY() {
       return this.prevY;
     }
 
-    public void setPrevY(double y) {
+    public void setPrevY(int y) {
       this.prevY = y;
     }
 
@@ -718,24 +720,73 @@ public class AtkinsJAutomata3 extends Application {
       this.prevDir = direction;
     }
 
-    public int getOrientation() {
-      //Want the ant to be default facing up
+    public int getDegreeOrientation() {
+      //Want the ant to be default facing up. Like a unit circle but starts
+      // facing up. Positive is anticlockwise, negative is clockwise.
+      return this.orientationDegree;
+    }
+
+    public void setDegreeOrientation(int degrees) {
+      this.orientationDegree = degrees;
+      if (orientationDegree >= 360)
+        orientationDegree = 0;
+      else if (orientationDegree <= -360)
+        orientationDegree = 0;
+    }
+
+    public Orientation getOrientationFromDegree() {
+      //Theoretically, 30, 90, 150, e.t.c should never be hit, as they are
+      // not multiples of 60. Theoretically.
+
+      //Covers a 60 degree angle at the top (-30 to 30)
+      if (getDegreeOrientation() < -330 || getDegreeOrientation() < 30
+          && (getDegreeOrientation() > -30
+          || getDegreeOrientation() > 330))
+        return Orientation.UP;
+
+        //60 Degree arc top left (30 to 90)
+      else if ((getDegreeOrientation() < 90 || getDegreeOrientation() < -270) &&
+          (getDegreeOrientation() > 30 ||
+              getDegreeOrientation() < 330))
+        return Orientation.TOP_LEFT;
+
+        //60 degree arc bottom left (90 to 150)
+      else if ((getDegreeOrientation() < 150 || getDegreeOrientation() < -210)
+          && getDegreeOrientation() > 90 || getDegreeOrientation() > -270)
+        return Orientation.BOTTOM_LEFT;
+
+        //60 degrees bottom (150 to 210)
+      else if ((getDegreeOrientation() < 210 || getDegreeOrientation() < -150)
+          && (getDegreeOrientation() > 150 || getDegreeOrientation() > -210))
+        return Orientation.DOWN;
+
+        //60 degrees bottom right (210 to 270)
+      else if ((getDegreeOrientation() < 270 || getDegreeOrientation() < -90) &&
+          (getDegreeOrientation() > 210 && getDegreeOrientation() > -150))
+        return Orientation.BOTTOM_RIGHT;
+
+        //60 degrees top right (270 to 330)
+      else if ((getDegreeOrientation() < 330 || getDegreeOrientation() < -30) &&
+          (getDegreeOrientation() > 270 || getDegreeOrientation() > -90))
+        return Orientation.TOP_RIGHT;
+
+      //Default is up
+      return Orientation.UP;
+    }
+
+    public Orientation getOrientation() {
       return this.orientation;
     }
 
-    public void setOrientation(int degrees) {
-      this.orientation = degrees;
-      if (orientation >= 360)
-        orientation = 0;
-      else if (orientation <= -360)
-        orientation = 0;
+    public void setOrientation(Orientation orientation) {
+      this.orientation = orientation;
     }
 
-    public void setPrevOrient(int degrees) {
+    public void setPrevDegreeOrient(int degrees) {
       this.prevOrient = degrees;
     }
 
-    public int getPrevOrientation() {
+    public int getPrevDegreeOrientation() {
       return this.prevOrient;
     }
 
@@ -761,6 +812,22 @@ public class AtkinsJAutomata3 extends Application {
 
     public void setStartHex(Polygon hex) {
       this.startHex = hex;
+    }
+
+    public int getStartX() {
+      return this.startX;
+    }
+
+    public void setStartX(int startX) {
+      this.startX = startX;
+    }
+
+    public int getStartY() {
+      return this.startY;
+    }
+
+    public void setStartY(int startY) {
+      this.startY = startY;
     }
   }
 
