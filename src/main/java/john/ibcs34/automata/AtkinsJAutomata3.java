@@ -31,6 +31,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 //Your grid is not overlayed correctly smh
+//NOTE: IF THE NEW SYSTEM DOESN'T WORK AFTER SEVERAL TRIES (LIKE RN),
+//USE THE NEW ANGLE GROUP CODE BUT APPLY IT TO YOUR ORIGINAL MOTION. SEE WHAT
+// HAPPENS.
 public class AtkinsJAutomata3 extends Application {
 
   public static void main(String[] args) {
@@ -263,8 +266,8 @@ public class AtkinsJAutomata3 extends Application {
             ant.setStartX(xPos);
             ant.setStartY(yPos);
           }
-          System.out.println("Y proportion: " + (y / sceneSize) + ", pos: " + yPos);
-          System.out.println("X proportion: " + (x / sceneSize) + ", pos: " + xPos);
+//          System.out.println("Y proportion: " + (y / sceneSize) + ", pos: " + yPos);
+//          System.out.println("X proportion: " + (x / sceneSize) + ", pos: " + xPos);
           dy = dy == y ? dy + hexSize * trigMult : y;
           hexes.add(tile);
 
@@ -295,8 +298,8 @@ public class AtkinsJAutomata3 extends Application {
       ant.setStartHex(centre);
       //Displays the ant
       displayAnt(ant);
-      System.out.println(ant.getStartX());
-      System.out.println(ant.getStartY());
+//      System.out.println(ant.getStartX());
+//      System.out.println(ant.getStartY());
 
       //KeyFrame animation
       KeyFrame frame = new KeyFrame(Duration.millis(updateInterval), event -> {
@@ -378,7 +381,6 @@ public class AtkinsJAutomata3 extends Application {
   public void rotateAnt(Ant ant, Direction direction) {
     ant.setDirection(direction);
     ant.setPrevDegreeOrient(ant.getDegreeOrientation());
-    System.out.println(direction);
     switch (direction) {
       case N:
         break;
@@ -422,7 +424,7 @@ public class AtkinsJAutomata3 extends Application {
 
     switch (ant.getOrientation()) {
       case UP:
-        moveY -= 2;
+        moveY -= 1;
         break;
       case TOP_LEFT:
         moveX -= 1;
@@ -433,7 +435,7 @@ public class AtkinsJAutomata3 extends Application {
         moveY += 2;
         break;
       case DOWN:
-        moveY += 2;
+        moveY += 1;
         break;
       case BOTTOM_RIGHT:
         moveX += 1;
@@ -453,9 +455,7 @@ public class AtkinsJAutomata3 extends Application {
     boolean outOfBounds = false;
     try {
       //Tests to see whether the ant is out of bounds
-      getColour(generations[(int)
-          getCentreFromHex(ant.getHex())[1]][(int)
-          getCentreFromHex(ant.getHex())[0]]);
+      getColour(generations[ant.getY()][ant.getX()]);
     } catch (ArrayIndexOutOfBoundsException e) {
       outOfBounds = true;
     }
