@@ -206,7 +206,6 @@ public class AtkinsJAutomata3 extends Application {
       Canvas grid = new Canvas(cellSize * gridSize + gridSize,
           cellSize * gridSize + gridSize);
 
-      generations = new int[(int) grid.getWidth()][(int) grid.getHeight()];
       Ant ant = new Ant();
       Polygon centre = new Polygon();
 
@@ -228,8 +227,24 @@ public class AtkinsJAutomata3 extends Application {
       //Hexagon time??
       //TODO: Store squares in array vs drawing them like this/use layers
 
+      //x and y iterations. 2 different kinds of hexagon rows.
+      int xi = 0, yi = 0;
+
       double hexSize = cellSize, trigMult = Math.sqrt(3) / 2.0;
       int sceneSize = gridSize * cellSize + gridSize - cellSize;
+      //Creates and fills up array of hexagons
+      for (double y = -cellSize; y < sceneSize; y += hexSize * trigMult * 2) {
+        for (double x = -cellSize; x < sceneSize; x += (3.0 / 2.0) * hexSize) {
+          if (yi == 0)
+            xi++;
+        }
+        yi++;
+      }
+
+      Polygon[][] hexagonField = new Polygon[yi + 1][xi + 1];
+      generations = new int[yi + 1][xi + 1];
+
+      int yPos = 0, xPos = 0;
       for (double y = -cellSize; y < sceneSize; y += hexSize * trigMult * 2) {
         for (double x = -cellSize, dy = y; x < sceneSize; x += (3.0 / 2.0) * hexSize) {
           //Points are clockwise
@@ -248,8 +263,14 @@ public class AtkinsJAutomata3 extends Application {
             centre = tile;
           dy = dy == y ? dy + hexSize * trigMult : y;
           hexes.add(tile);
-        }
 
+          if (xPos >= xi)
+            xPos = 0;
+          else xPos++;
+
+          hexagonField[yPos][xPos] = tile;
+        }
+        yPos++;
       }
 
       root.getChildren().addAll(hexes);
@@ -304,8 +325,9 @@ public class AtkinsJAutomata3 extends Application {
   }
 
   public void placeAnt(Ant ant, Polygon centre) {
-    ant.setX((int) getCentreFromHex(centre)[0]);
-    ant.setY((int) getCentreFromHex(centre)[1]);
+    ant.getPrevHex().setStroke(Color.BLACK);
+    ant.setX(getCentreFromHex(centre)[0]);
+    ant.setY(getCentreFromHex(centre)[1]);
     ant.setHex(centre);
     ant.setDirection(Direction.N);
   }
@@ -313,7 +335,7 @@ public class AtkinsJAutomata3 extends Application {
   public void displayAnt(List<Polygon> hexes, Ant ant, Map<Paint,
       Direction> antMap) {
     ant.getHex().setEffect(new Glow());
-    ant.getHex().setStroke(Color.RED);
+    ant.getHex().setStroke(Color.PURPLE);
   }
 
   public void updateAnt(LinkedList<Polygon> hexes, Ant ant,
@@ -323,7 +345,8 @@ public class AtkinsJAutomata3 extends Application {
     Polygon hex = ant.getHex();
     //If the hex is null I have other issues; todo print out an error message
     try {
-      rotateAnt(ant, antMap.get(hex.getFill()));
+      //Rotates the ant
+      rotateAnt(ant, ant.getDirection());
       moveAnt(ant, cellSize, hexes, generations);
     } catch (NullPointerException e) {
       e.printStackTrace();
@@ -333,40 +356,46 @@ public class AtkinsJAutomata3 extends Application {
 
   public void updateHexfield(List<Polygon> hexes, Ant ant, int[][] generations,
                              Map<Paint, Direction> antMap) {
+    //Sets the direction here
+    ant.setDirection(antMap.get(ant.getHex().getFill()));
     toggleHexes(ant, antMap, generations);
-    ant.getHex().setFill(getColour(generations[(int)
-        getCentreFromHex(ant.getHex())[0]][(int)
-        getCentreFromHex(ant.getHex())[1]]));
+    ant.getHex().setFill(getColour(generations[(int) ant.getX()]
+        [(int) ant.getY()]));
   }
 
   public void toggleHexes(Ant ant, Map<Paint, Direction> antMap,
                           int[][] generations) {
     //It's errorring (erroring?) cause it's negative. Why, good sir?
-    generations[(int) ant.getX()][(int) ant.getY()]++;
-    if (generations[(int) ant.getX()][(int) ant.getY()] >= antMap.size())
-      generations[(int) ant.getX()][(int) ant.getY()] = 0;
+    try {
+      generations[(int) ant.getX()][(int) ant.getY()]++;
+      if (generations[(int) ant.getX()][(int) ant.getY()] >= antMap.size())
+        generations[(int) ant.getX()][(int) ant.getY()] = 0;
+    } catch (ArrayIndexOutOfBoundsException e) {
+      placeAnt(ant, ant.getStartHex());
+    }
   }
 
   public void rotateAnt(Ant ant, Direction direction) {
     ant.setPrevOrient(ant.getOrientation());
+    System.out.println(direction);
     switch (direction) {
       case N:
         break;
       //Anti clockwise
       case M:
-        ant.setOrientation(ant.getOrientation() - 60);
+        ant.setOrientation(ant.getOrientation() + 60);
         break;
       case L:
-        ant.setOrientation(ant.getOrientation() - 120);
+        ant.setOrientation(ant.getOrientation() + 120);
         break;
       case U:
         ant.setOrientation(ant.getOrientation() + 180);
         break;
       case S:
-        ant.setOrientation(ant.getOrientation() + 120);
+        ant.setOrientation(ant.getOrientation() - 120);
         break;
       case R:
-        ant.setOrientation(ant.getOrientation() + 60);
+        ant.setOrientation(ant.getOrientation() - 60);
         break;
     }
   }
@@ -377,17 +406,39 @@ public class AtkinsJAutomata3 extends Application {
     // next hex
     ant.setPrevX(ant.getX());
     ant.setPrevY(ant.getY());
+    ant.getPrevHex().setStroke(Color.BLACK);
+
+    //notes if moving directly across hexagons:
+    //Up is -2 y layers.
+    //Down is +2 y layers.
+    //Diagonal down left is -1 x, -1 y
+    //Diagonal up left is -1 x, -1 y
+    //Diagonal up right is +1 x, -1 y
+    //Diagonal down right is +1 x, + 1 y
+
+
+
+    double angle = ant.getOrientation() + 90;
+    //No more 30 degree angles here!
+    if (!(ant.getDirection().equals(Direction.N) ||
+        ant.getDirection().equals(Direction.U))) {
+      if (angle % 30 == 0 && angle % 60 != 0)
+        if (angle < 0)
+          angle -= 30;
+        else if (angle > 0)
+          angle += 30;
+    }
+    System.out.println("Angle: " + angle);
 
     //Trig due to hexes
     //Need to fix?
     //Width is 2 * cellSize
-    double moveX =
-        (cellSize * 2 * Math.cos(Math.toRadians(30)));
+    double moveX = (cellSize * 2 * Math.cos(Math.toRadians(angle)));
+    // + 90)));
     //In this case, negative is up, and we want the ant to start facing up
     //Height is cellSize * Math.sqrt(3) / 2
-    double moveY =
-        (cellSize * Math.sqrt(3) / 2 * Math.sin(Math.
-            toRadians(30))) * -1;
+    double moveY = (cellSize * Math.sqrt(3) / 2 * Math.sin
+        (Math.toRadians(angle))) * -1;
     ant.setX(ant.getX() + moveX);
     ant.setY(ant.getY() + moveY);
 
@@ -408,9 +459,8 @@ public class AtkinsJAutomata3 extends Application {
           hexToSet = hex;
           ant.setPrevHex(ant.getHex());
           ant.setHex(hexToSet);
-
-//          ant.setX(hexToSet.getPoints().get(0));
-//          ant.setY(hexToSet.getPoints().get(1));
+          ant.setX(getCentreFromHex(hexToSet)[0]);
+          ant.setY(getCentreFromHex(hexToSet)[1]);
         }
       }
     }
@@ -520,7 +570,9 @@ public class AtkinsJAutomata3 extends Application {
     //Note: While this is more correct, for the purposes of our lab, we're
     // gonna cheat:
     double distanceToCentre = distance(point, centre);
-    if (distanceToCentre <= outerRadius)
+    if (distanceToCentre > outerRadius)
+      return false;
+    if (distanceToCentre <= innerRadius)
       return true;
 
     // Determine closest points
@@ -668,11 +720,15 @@ public class AtkinsJAutomata3 extends Application {
 
     public int getOrientation() {
       //Want the ant to be default facing up
-      return this.orientation + 90;
+      return this.orientation;
     }
 
     public void setOrientation(int degrees) {
       this.orientation = degrees;
+      if (orientation >= 360)
+        orientation = 0;
+      else if (orientation <= -360)
+        orientation = 0;
     }
 
     public void setPrevOrient(int degrees) {
