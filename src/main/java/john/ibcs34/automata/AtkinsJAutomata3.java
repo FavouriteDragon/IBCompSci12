@@ -263,10 +263,12 @@ public class AtkinsJAutomata3 extends Application {
             ant.setStartX(xPos);
             ant.setStartY(yPos);
           }
+          System.out.println("Y proportion: " + (y / sceneSize) + ", pos: " + yPos);
+          System.out.println("X proportion: " + (x / sceneSize) + ", pos: " + xPos);
           dy = dy == y ? dy + hexSize * trigMult : y;
           hexes.add(tile);
 
-          if (xPos >= xi)
+          if (xPos >= xi - 1)
             xPos = 0;
           else xPos++;
 
